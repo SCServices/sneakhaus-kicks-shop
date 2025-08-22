@@ -6,6 +6,7 @@ import ProductCard from '@/components/ProductCard';
 import { useStore } from '@/lib/store';
 import { TextRotate } from '@/components/ui/text-rotate';
 import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
+import { StaggerTestimonials } from '@/components/ui/stagger-testimonials';
 import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-sneaker.jpg';
 // Video will be added when available
@@ -188,13 +189,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Testimonials Placeholder */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8">Customer Testimonials</h2>
-            <p className="text-lg text-muted-foreground">Placeholder for customer testimonials section</p>
-          </div>
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto">
+          <StaggerTestimonials />
         </div>
       </section>
 
