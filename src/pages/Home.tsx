@@ -11,6 +11,8 @@ import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-sneaker.jpg';
 // Video will be added when available
 import collectionImage from '@/assets/collection-banner.jpg';
+import SocialMediaFeed from '@/components/SocialMediaFeed';
+import KPISlider from '@/components/KPISlider';
 
 const Home = () => {
   const { products, addToCart } = useStore();
@@ -195,6 +197,12 @@ const Home = () => {
           <StaggerTestimonials />
         </div>
       </section>
+
+      {/* Social Media Feed */}
+      <SocialMediaFeed />
+
+      {/* KPI Slider */}
+      <KPISlider />
 
       {/* Newsletter */}
       <section className="py-20 gradient-hero text-white relative overflow-hidden">
