@@ -201,9 +201,6 @@ const Home = () => {
       {/* Social Media Feed */}
       <SocialMediaFeed />
 
-      {/* KPI Slider */}
-      <KPISlider />
-
       {/* Newsletter */}
       <section className="py-20 gradient-hero text-white relative overflow-hidden">
         {/* Background decorative elements */}
@@ -260,6 +257,9 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* KPI Slider */}
+      <KPISlider />
     </div>
   );
 };
