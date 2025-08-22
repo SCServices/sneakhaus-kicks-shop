@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
 import { useStore } from '@/lib/store';
+import { TextRotate } from '@/components/ui/text-rotate';
 import heroImage from '@/assets/hero-sneaker.jpg';
 import collectionImage from '@/assets/collection-banner.jpg';
 
@@ -29,10 +30,26 @@ const Home = () => {
         
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
-            STEP INTO
-            <span className="block gradient-gold bg-clip-text text-transparent">
-              EXCELLENCE
-            </span>
+            <span className="block">STEP INTO</span>
+            <TextRotate
+              texts={[
+                "EXCELLENCE",
+                "GREATNESS", 
+                "LUXURY",
+                "STYLE",
+                "COMFORT",
+                "PERFECTION"
+              ]}
+              mainClassName="block bg-brand-gold text-brand-black px-3 py-2 rounded-lg overflow-hidden justify-start"
+              staggerFrom="last"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerDuration={0.025}
+              splitLevelClassName="overflow-hidden"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={3000}
+            />
           </h1>
           <p className="text-lg md:text-xl mb-8 text-gray-200 max-w-2xl mx-auto">
             Discover our premium collection of sneakers designed for the modern lifestyle. 
