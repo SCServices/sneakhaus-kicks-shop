@@ -33,7 +33,7 @@ const Home = () => {
           className="absolute inset-0 w-full h-full object-cover"
           poster={heroImage}
         >
-          <source src="/path-to-your-video.mp4" type="video/mp4" />
+          <source src="https://cdn.midjourney.com/video/bf15390a-b9ef-41ff-b8ba-b55ea176ae31/0.mp4" type="video/mp4" />
           {/* Fallback image if video fails to load */}
           <div 
             className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
