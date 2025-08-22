@@ -63,7 +63,7 @@ const Cart = () => {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Color: </span>
-                            <span className="font-medium">{item.selectedColor}</span>
+                            <span className="font-medium">{item.selectedColor.name}</span>
                           </div>
                         </div>
 

@@ -3,7 +3,7 @@ import { ArrowRight, Star, Truck, Shield, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
-import { useStore } from '@/lib/store';
+import { useStore, ProductColor } from '@/lib/store';
 import { TextRotate } from '@/components/ui/text-rotate';
 import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
 import { StaggerTestimonials } from '@/components/ui/stagger-testimonials';
@@ -18,7 +18,7 @@ const Home = () => {
   const { products, addToCart } = useStore();
   const featuredProducts = products.filter(product => product.featured);
 
-  const handleQuickAdd = (product: any, size?: string, color?: string) => {
+  const handleQuickAdd = (product: any, size?: string, color?: ProductColor) => {
     // Add to cart with selected size and color, or defaults
     const selectedSize = size || product.sizes[0];
     const selectedColor = color || product.colors[0];
