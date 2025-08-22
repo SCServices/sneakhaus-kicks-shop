@@ -76,6 +76,7 @@ const mockProducts: Product[] = [
     sizes: ['7', '8', '9', '10', '11', '12'],
     colors: ['Black', 'Gold', 'Red'],
     description: 'Professional basketball shoe with premium materials',
+    featured: true,
   },
   {
     id: '5',
@@ -86,6 +87,17 @@ const mockProducts: Product[] = [
     sizes: ['7', '8', '9', '10', '11', '12'],
     colors: ['Brown', 'Black'],
     description: 'Premium leather boots with rugged construction and timeless style',
+    featured: true,
+  },
+  {
+    id: '6',
+    name: 'Street Walker',
+    price: 229,
+    image: '/placeholder.svg',
+    category: 'Casual',
+    sizes: ['7', '8', '9', '10', '11', '12'],
+    colors: ['White', 'Black', 'Beige'],
+    description: 'Comfortable everyday sneaker with minimalist design',
     featured: true,
   },
 ];
