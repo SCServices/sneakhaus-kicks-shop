@@ -188,6 +188,16 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Testimonials Placeholder */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8">Customer Testimonials</h2>
+            <p className="text-lg text-muted-foreground">Placeholder for customer testimonials section</p>
+          </div>
+        </div>
+      </section>
+
       {/* Newsletter */}
       <section className="py-20 gradient-hero text-white relative overflow-hidden">
         {/* Background decorative elements */}
