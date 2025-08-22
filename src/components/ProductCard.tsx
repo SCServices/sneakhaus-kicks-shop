@@ -4,30 +4,101 @@ import { Heart, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/lib/store';
+import { motion } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart?: (product: Product) => void;
+  onAddToCart?: (product: Product, size?: string, color?: string) => void;
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [activeColorIndex, setActiveColorIndex] = useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+
+  // Mock multiple images per color for demo - in real app this would come from product data
+  const productImages = product.colors.map((color, index) => ({
+    id: `${product.id}-${color}`,
+    color,
+    images: [
+      product.image, // First image - same for demo
+      product.image  // Hover image - same for demo, would be different in real app
+    ]
+  }));
+
+  const getColorValue = (colorName: string) => {
+    const colorMap: { [key: string]: string } = {
+      'Black': '#000000',
+      'White': '#FFFFFF', 
+      'Gold': '#D4AF37',
+      'Navy': '#000080',
+      'Gray': '#808080',
+      'Red': '#FF0000',
+      'Brown': '#8B4513',
+      'Blue': '#0000FF',
+      'Green': '#008000',
+      'Beige': '#F5F5DC'
+    };
+    return colorMap[colorName] || '#CCCCCC';
+  };
+
+  const handleColorChange = (index: number) => {
+    setActiveColorIndex(index);
+    setActiveImageIndex(0);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    setActiveImageIndex(1);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setActiveImageIndex(0);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const selectedColor = product.colors[activeColorIndex];
+    onAddToCart?.(product, selectedSize, selectedColor);
+  };
 
   return (
-    <div 
-      className="group relative bg-card rounded-lg overflow-hidden shadow-card transition-smooth hover:shadow-product"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="group relative bg-card rounded-lg overflow-hidden shadow-card transition-smooth hover:shadow-product">
       {/* Product Image */}
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-brand-gray-light relative overflow-hidden">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover transition-smooth group-hover:scale-105"
-          />
+        <div 
+          className="aspect-square bg-brand-gray-light relative overflow-hidden"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Image switching based on color selection */}
+          <div className="relative w-full h-full">
+            {productImages.map((imageSet, index) => (
+              <motion.div
+                key={imageSet.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: index === activeColorIndex ? 1 : 0 
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.img
+                  src={imageSet.images[activeImageIndex]}
+                  alt={`${product.name} in ${imageSet.color}`}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  initial={{ scale: 1 }}
+                  animate={{ 
+                    scale: isHovered ? 1.05 : 1 
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+            ))}
+          </div>
           
           {/* Overlay Actions */}
           <div className={`absolute inset-0 bg-black/20 flex items-center justify-center transition-smooth ${
@@ -35,10 +106,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           }`}>
             <Button 
               className="bg-white text-brand-black hover:bg-brand-gold hover:text-white transition-smooth"
-              onClick={(e) => {
-                e.preventDefault();
-                onAddToCart?.(product);
-              }}
+              onClick={handleAddToCart}
             >
               <ShoppingBag className="h-4 w-4 mr-2" />
               Quick Add
@@ -70,7 +138,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
       </Link>
 
       {/* Product Info */}
-      <div className="p-4 space-y-2">
+      <div className="p-4 space-y-3">
         <Link to={`/product/${product.id}`}>
           <h3 className="font-semibold text-foreground group-hover:text-accent transition-smooth">
             {product.name}
@@ -81,36 +149,55 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         
         <div className="flex items-center justify-between">
           <p className="text-lg font-bold text-brand-black">${product.price}</p>
-          
-          {/* Color Options */}
-          <div className="flex space-x-1">
-            {product.colors.slice(0, 3).map((color) => (
-              <div
+        </div>
+
+        {/* Color Selection */}
+        <div className="space-y-2">
+          <span className="text-xs text-muted-foreground">Colors:</span>
+          <div className="flex space-x-2">
+            {product.colors.map((color, index) => (
+              <button
                 key={color}
-                className={`w-4 h-4 rounded-full border-2 border-gray-300 ${
-                  color === 'Black' ? 'bg-black' :
-                  color === 'White' ? 'bg-white' :
-                  color === 'Gold' ? 'bg-brand-gold' :
-                  color === 'Navy' ? 'bg-blue-900' :
-                  color === 'Gray' ? 'bg-gray-500' :
-                  color === 'Red' ? 'bg-red-500' :
-                  'bg-gray-300'
-                }`}
+                className="relative w-6 h-6 rounded-full border-2 border-gray-300 transition-all duration-200 hover:scale-110"
+                style={{ backgroundColor: getColorValue(color) }}
+                onClick={() => handleColorChange(index)}
                 title={color}
-              />
+              >
+                {index === activeColorIndex && (
+                  <motion.div
+                    layoutId={`color-indicator-${product.id}`}
+                    className="absolute -inset-1 rounded-full border-2 border-primary"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </button>
             ))}
-            {product.colors.length > 3 && (
-              <div className="text-xs text-muted-foreground">
-                +{product.colors.length - 3}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Size Preview */}
-        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-          <span>Sizes:</span>
-          <span>{product.sizes[0]} - {product.sizes[product.sizes.length - 1]}</span>
+        {/* Size Selection */}
+        <div className="space-y-2">
+          <span className="text-xs text-muted-foreground">Size:</span>
+          <div className="flex flex-wrap gap-1">
+            {product.sizes.slice(0, 6).map((size) => (
+              <button
+                key={size}
+                className={`px-2 py-1 text-xs border rounded transition-all duration-200 ${
+                  selectedSize === size
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-background text-foreground border-border hover:border-primary'
+                }`}
+                onClick={() => setSelectedSize(size)}
+              >
+                {size}
+              </button>
+            ))}
+            {product.sizes.length > 6 && (
+              <span className="text-xs text-muted-foreground px-2 py-1">
+                +{product.sizes.length - 6}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

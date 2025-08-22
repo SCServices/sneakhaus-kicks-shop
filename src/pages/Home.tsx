@@ -18,9 +18,11 @@ const Home = () => {
   const { products, addToCart } = useStore();
   const featuredProducts = products.filter(product => product.featured);
 
-  const handleQuickAdd = (product: any) => {
-    // Add to cart with default selections for quick add
-    addToCart(product, product.sizes[0], product.colors[0]);
+  const handleQuickAdd = (product: any, size?: string, color?: string) => {
+    // Add to cart with selected size and color, or defaults
+    const selectedSize = size || product.sizes[0];
+    const selectedColor = color || product.colors[0];
+    addToCart(product, selectedSize, selectedColor);
   };
 
   return (
