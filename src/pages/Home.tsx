@@ -5,6 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
 import { useStore } from '@/lib/store';
 import { TextRotate } from '@/components/ui/text-rotate';
+import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
+import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-sneaker.jpg';
 import collectionImage from '@/assets/collection-banner.jpg';
 
@@ -173,22 +175,59 @@ const Home = () => {
       </section>
 
       {/* Newsletter */}
-      <section className="py-16 gradient-hero text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Stay in the Loop</h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Be the first to know about new drops, exclusive releases, and special offers.
-          </p>
-          <div className="max-w-md mx-auto flex space-x-4">
-            <input 
-              type="email" 
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-gold"
+      <section className="py-20 gradient-hero text-white relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-24 h-24 bg-brand-gold rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="mb-8">
+            <TypewriterEffectSmooth 
+              words={[
+                { text: "Stay" },
+                { text: "in" },
+                { text: "the" },
+                { text: "Loop", className: "text-brand-gold" }
+              ]}
+              className="justify-center mb-6"
+              cursorClassName="bg-brand-gold"
             />
-            <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light px-8">
-              Subscribe
-            </Button>
           </div>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 2.5 }}
+            className="text-lg md:text-xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed"
+          >
+            Be the first to know about new drops, exclusive releases, and special offers. 
+            Join our community of sneaker enthusiasts.
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 3 }}
+            className="max-w-lg mx-auto"
+          >
+            <div className="flex flex-col sm:flex-row gap-4 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+              <input 
+                type="email" 
+                placeholder="Enter your email address"
+                className="flex-1 px-6 py-4 bg-transparent text-white placeholder:text-gray-300 focus:outline-none text-lg"
+              />
+              <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-brand-gold/25">
+                Subscribe
+              </Button>
+            </div>
+            
+            <p className="text-sm text-gray-400 mt-4">
+              No spam, unsubscribe at any time. We respect your privacy.
+            </p>
+          </motion.div>
         </div>
       </section>
     </div>
