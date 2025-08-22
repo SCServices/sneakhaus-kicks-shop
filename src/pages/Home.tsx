@@ -8,6 +8,7 @@ import { TextRotate } from '@/components/ui/text-rotate';
 import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
 import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-sneaker.jpg';
+// Video will be added when available
 import collectionImage from '@/assets/collection-banner.jpg';
 
 const Home = () => {
@@ -23,12 +24,25 @@ const Home = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImage})` }}
+        {/* Video Background */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster={heroImage}
         >
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+          <source src="/path-to-your-video.mp4" type="video/mp4" />
+          {/* Fallback image if video fails to load */}
+          <div 
+            className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${heroImage})` }}
+          />
+        </video>
+        
+        {/* Gray overlay for text readability */}
+        <div className="absolute inset-0 bg-gray-900/50" />
         
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
