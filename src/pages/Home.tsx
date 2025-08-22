@@ -40,7 +40,7 @@ const Home = () => {
                 "COMFORT",
                 "PERFECTION"
               ]}
-              mainClassName="block bg-brand-gold text-brand-black px-3 py-2 rounded-lg overflow-hidden justify-start"
+              mainClassName="inline-flex bg-brand-gold text-brand-black px-4 py-2 rounded-lg overflow-hidden justify-center items-center text-center min-w-fit"
               staggerFrom="last"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
