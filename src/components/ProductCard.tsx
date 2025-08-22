@@ -16,7 +16,17 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+  
+  // Add defensive check for product data
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes && product.sizes.length > 0 ? product.sizes[0] : ''
+  );
+
+  // Add defensive check for colors array
+  if (!product.colors || product.colors.length === 0) {
+    console.error('Product missing colors array:', product);
+    return <div>Error: Product data incomplete</div>;
+  }
 
   // Get the current active color object
   const activeColor = product.colors[activeColorIndex];
@@ -38,6 +48,10 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!selectedSize) {
+      console.warn('No size selected');
+      return;
+    }
     onAddToCart?.(product, selectedSize, activeColor);
   };
 
@@ -166,23 +180,29 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         <div className="space-y-2">
           <span className="text-xs text-muted-foreground">Size:</span>
           <div className="flex flex-wrap gap-1">
-            {product.sizes.slice(0, 6).map((size) => (
-              <button
-                key={size}
-                className={`px-2 py-1 text-xs border rounded transition-all duration-200 ${
-                  selectedSize === size
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-background text-foreground border-border hover:border-primary'
-                }`}
-                onClick={() => setSelectedSize(size)}
-              >
-                {size}
-              </button>
-            ))}
-            {product.sizes.length > 6 && (
-              <span className="text-xs text-muted-foreground px-2 py-1">
-                +{product.sizes.length - 6}
-              </span>
+            {product.sizes && product.sizes.length > 0 ? (
+              <>
+                {product.sizes.slice(0, 6).map((size) => (
+                  <button
+                    key={size}
+                    className={`px-2 py-1 text-xs border rounded transition-all duration-200 ${
+                      selectedSize === size
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background text-foreground border-border hover:border-primary'
+                    }`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+                {product.sizes.length > 6 && (
+                  <span className="text-xs text-muted-foreground px-2 py-1">
+                    +{product.sizes.length - 6}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground">No sizes available</span>
             )}
           </div>
         </div>

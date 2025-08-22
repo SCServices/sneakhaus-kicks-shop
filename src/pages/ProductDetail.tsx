@@ -34,6 +34,22 @@ const ProductDetail = () => {
     );
   }
 
+  // Add defensive checks for product data
+  if (!product.colors || product.colors.length === 0) {
+    console.error('Product missing colors array:', product);
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-4">Product Data Incomplete</h1>
+          <Button onClick={() => navigate('/')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const selectedColor = product.colors[selectedColorIndex];
 
   const handleAddToCart = () => {
@@ -165,19 +181,25 @@ const ProductDetail = () => {
           <div className="space-y-3">
             <label className="text-sm font-medium">Size</label>
             <div className="grid grid-cols-4 gap-2">
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`py-3 px-4 border rounded-lg text-center transition-all ${
-                    selectedSize === size
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-background text-foreground border-border hover:border-primary'
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
+              {product.sizes && product.sizes.length > 0 ? (
+                product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`py-3 px-4 border rounded-lg text-center transition-all ${
+                      selectedSize === size
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-background text-foreground border-border hover:border-primary'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))
+              ) : (
+                <div className="col-span-4 text-center text-muted-foreground">
+                  No sizes available
+                </div>
+              )}
             </div>
           </div>
 

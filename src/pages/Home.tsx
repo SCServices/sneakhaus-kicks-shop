@@ -19,7 +19,14 @@ const Home = () => {
   const featuredProducts = products.filter(product => product.featured);
 
   const handleQuickAdd = (product: any, size?: string, color?: ProductColor) => {
-    // Add to cart with selected size and color, or defaults
+    // Add defensive checks to prevent undefined errors
+    console.log('handleQuickAdd called with:', { product, size, color });
+    
+    if (!product || !product.sizes || !product.colors) {
+      console.error('Invalid product data:', product);
+      return;
+    }
+    
     const selectedSize = size || product.sizes[0];
     const selectedColor = color || product.colors[0];
     addToCart(product, selectedSize, selectedColor);
