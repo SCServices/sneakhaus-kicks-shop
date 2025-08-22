@@ -211,20 +211,20 @@ const Home = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 3 }}
-            className="max-w-lg mx-auto"
+            className="max-w-xl mx-auto"
           >
-            <div className="flex flex-col sm:flex-row gap-4 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+            <div className="flex flex-col sm:flex-row items-center gap-3 p-3 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
               <input 
                 type="email" 
                 placeholder="Enter your email address"
-                className="flex-1 px-6 py-4 bg-transparent text-white placeholder:text-gray-300 focus:outline-none text-lg"
+                className="flex-1 w-full sm:w-auto px-6 py-4 bg-transparent text-white placeholder:text-gray-300 focus:outline-none text-lg border-none"
               />
-              <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-brand-gold/25">
+              <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-brand-gold/25 whitespace-nowrap">
                 Subscribe
               </Button>
             </div>
             
-            <p className="text-sm text-gray-400 mt-4">
+            <p className="text-sm text-gray-400 mt-4 text-center">
               No spam, unsubscribe at any time. We respect your privacy.
             </p>
           </motion.div>
