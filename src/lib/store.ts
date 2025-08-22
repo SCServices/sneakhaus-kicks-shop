@@ -1,7 +1,6 @@
 // Simple store for cart management
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import brownBootsImage from '@/assets/brown-leather-boots.jpg';
 
 export interface Product {
   id: string;
@@ -76,17 +75,6 @@ const mockProducts: Product[] = [
     sizes: ['7', '8', '9', '10', '11', '12'],
     colors: ['Black', 'Gold', 'Red'],
     description: 'Professional basketball shoe with premium materials',
-  },
-  {
-    id: '5',
-    name: 'Heritage Leather Boots',
-    price: 399,
-    image: brownBootsImage,
-    category: 'Boots',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Brown', 'Black'],
-    description: 'Premium leather boots with rugged construction and timeless style',
-    featured: true,
   },
 ];
 
