@@ -18,7 +18,18 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'inter': ['Inter', 'sans-serif'],
+			},
 			colors: {
+				// Brand colors
+				'brand-black': 'hsl(var(--brand-black))',
+				'brand-gold': 'hsl(var(--brand-gold))',
+				'brand-gold-light': 'hsl(var(--brand-gold-light))',
+				'brand-gray-light': 'hsl(var(--brand-gray-light))',
+				'brand-gray-medium': 'hsl(var(--brand-gray-medium))',
+				'brand-gray-dark': 'hsl(var(--brand-gray-dark))',
+				// Component colors
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
