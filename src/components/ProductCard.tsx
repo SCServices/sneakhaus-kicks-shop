@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Product } from '@/lib/store';
+import { Product, ProductColor } from '@/lib/store';
 import { motion } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart?: (product: Product, size?: string, color?: string) => void;
+  onAddToCart?: (product: Product, size?: string, color?: ProductColor) => void;
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
@@ -18,31 +18,8 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
 
-  // Mock multiple images per color for demo - in real app this would come from product data
-  const productImages = product.colors.map((color, index) => ({
-    id: `${product.id}-${color}`,
-    color,
-    images: [
-      product.image, // First image - same for demo
-      product.image  // Hover image - same for demo, would be different in real app
-    ]
-  }));
-
-  const getColorValue = (colorName: string) => {
-    const colorMap: { [key: string]: string } = {
-      'Black': '#000000',
-      'White': '#FFFFFF', 
-      'Gold': '#D4AF37',
-      'Navy': '#000080',
-      'Gray': '#808080',
-      'Red': '#FF0000',
-      'Brown': '#8B4513',
-      'Blue': '#0000FF',
-      'Green': '#008000',
-      'Beige': '#F5F5DC'
-    };
-    return colorMap[colorName] || '#CCCCCC';
-  };
+  // Get the current active color object
+  const activeColor = product.colors[activeColorIndex];
 
   const handleColorChange = (index: number) => {
     setActiveColorIndex(index);
@@ -61,8 +38,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    const selectedColor = product.colors[activeColorIndex];
-    onAddToCart?.(product, selectedSize, selectedColor);
+    onAddToCart?.(product, selectedSize, activeColor);
   };
 
   return (
@@ -76,28 +52,18 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         >
           {/* Image switching based on color selection */}
           <div className="relative w-full h-full">
-            {productImages.map((imageSet, index) => (
-              <motion.div
-                key={imageSet.id}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: index === activeColorIndex ? 1 : 0 
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.img
-                  src={imageSet.images[activeImageIndex]}
-                  alt={`${product.name} in ${imageSet.color}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  initial={{ scale: 1 }}
-                  animate={{ 
-                    scale: isHovered ? 1.05 : 1 
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-            ))}
+            <motion.img
+              key={`${activeColor.name}-${activeImageIndex}`}
+              src={activeColor.images[activeImageIndex]}
+              alt={`${product.name} in ${activeColor.name}`}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ 
+                opacity: 1,
+                scale: isHovered ? 1.05 : 1 
+              }}
+              transition={{ duration: 0.3 }}
+            />
           </div>
           
           {/* Overlay Actions */}
@@ -128,9 +94,23 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
           </Button>
 
-          {/* Featured Badge */}
-          {product.featured && (
+          {/* Sale Badge */}
+          {product.isOnSale && (
+            <Badge className="absolute top-3 left-3 bg-red-500 text-white">
+              Sale
+            </Badge>
+          )}
+
+          {/* New Arrival Badge */}
+          {product.isNewArrival && !product.isOnSale && (
             <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground">
+              New
+            </Badge>
+          )}
+
+          {/* Featured Badge */}
+          {product.featured && !product.isOnSale && !product.isNewArrival && (
+            <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
               Featured
             </Badge>
           )}
@@ -145,10 +125,17 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           </h3>
         </Link>
         
-        <p className="text-sm text-muted-foreground">{product.category}</p>
+        <p className="text-sm text-muted-foreground">{product.category} • {product.gender === 'men' ? "Men's" : "Women's"}</p>
         
         <div className="flex items-center justify-between">
-          <p className="text-lg font-bold text-brand-black">${product.price}</p>
+          {product.isOnSale && product.originalPrice ? (
+            <div className="flex items-center space-x-2">
+              <p className="text-lg font-bold text-brand-black">${product.price}</p>
+              <p className="text-sm text-muted-foreground line-through">${product.originalPrice}</p>
+            </div>
+          ) : (
+            <p className="text-lg font-bold text-brand-black">${product.price}</p>
+          )}
         </div>
 
         {/* Color Selection */}
@@ -157,11 +144,11 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <div className="flex space-x-2">
             {product.colors.map((color, index) => (
               <button
-                key={color}
+                key={color.name}
                 className="relative w-6 h-6 rounded-full border-2 border-gray-300 transition-all duration-200 hover:scale-110"
-                style={{ backgroundColor: getColorValue(color) }}
+                style={{ backgroundColor: color.value }}
                 onClick={() => handleColorChange(index)}
-                title={color}
+                title={color.name}
               >
                 {index === activeColorIndex && (
                   <motion.div

@@ -1,103 +1,214 @@
-// Simple store for cart management
+// Enhanced store for cart management and product catalog
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import brownBootsImage from '@/assets/brown-leather-boots.jpg';
+
+// Import AI-generated shoe images
+import mensAthleticWhite from '@/assets/mens-athletic-white.jpg';
+import mensAthleticBlack from '@/assets/mens-athletic-black.jpg';
+import mensCasualNavy from '@/assets/mens-casual-navy.jpg';
+import mensCasualWhite from '@/assets/mens-casual-white.jpg';
+import mensBasketballBlack from '@/assets/mens-basketball-black.jpg';
+import mensBasketballRed from '@/assets/mens-basketball-red.jpg';
+import womensRunningPink from '@/assets/womens-running-pink.jpg';
+import womensRunningBlack from '@/assets/womens-running-black.jpg';
+import womensCasualBeige from '@/assets/womens-casual-beige.jpg';
+import womensCasualWhite from '@/assets/womens-casual-white.jpg';
+import womensFashionPurple from '@/assets/womens-fashion-purple.jpg';
+import womensFashionBlack from '@/assets/womens-fashion-black.jpg';
+
+export interface ProductColor {
+  name: string;
+  value: string;
+  images: string[];
+}
 
 export interface Product {
   id: string;
   name: string;
   price: number;
+  originalPrice?: number; // For sale items
   image: string;
   category: string;
   sizes: string[];
-  colors: string[];
+  colors: ProductColor[];
   description: string;
+  useCases?: string[];
+  gender: 'men' | 'women' | 'unisex';
+  isNewArrival?: boolean;
+  isOnSale?: boolean;
   featured?: boolean;
 }
 
 export interface CartItem extends Product {
   quantity: number;
   selectedSize: string;
-  selectedColor: string;
+  selectedColor: ProductColor;
 }
 
 interface StoreState {
   products: Product[];
   cart: CartItem[];
-  addToCart: (product: Product, size: string, color: string) => void;
-  removeFromCart: (id: string, size: string, color: string) => void;
-  updateQuantity: (id: string, size: string, color: string, quantity: number) => void;
+  addToCart: (product: Product, size: string, color: ProductColor) => void;
+  removeFromCart: (id: string, size: string, color: ProductColor) => void;
+  updateQuantity: (id: string, size: string, color: ProductColor, quantity: number) => void;
   clearCart: () => void;
   cartTotal: () => number;
   cartCount: () => number;
+  getProductsByGender: (gender: 'men' | 'women') => Product[];
+  getNewArrivals: () => Product[];
+  getSaleProducts: () => Product[];
 }
 
-// Mock product data
+// Enhanced product catalog with AI-generated images
 const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Apex High-Top',
+    name: 'Urban Athletic Pro',
     price: 299,
-    image: '/placeholder.svg',
-    category: 'High-Top',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Black', 'White', 'Gold'],
-    description: 'Premium leather high-top sneaker with gold accents',
+    image: mensAthleticWhite,
+    category: 'Athletic',
+    gender: 'men',
+    sizes: ['7', '8', '9', '10', '11', '12', '13'],
+    colors: [
+      {
+        name: 'White/Gray',
+        value: '#F8F9FA',
+        images: [mensAthleticWhite, mensAthleticWhite]
+      },
+      {
+        name: 'Black/Gray', 
+        value: '#212529',
+        images: [mensAthleticBlack, mensAthleticBlack]
+      }
+    ],
+    description: 'Premium athletic sneaker engineered for peak performance',
+    useCases: ['Running', 'Training', 'Casual wear', 'Gym workouts'],
+    isNewArrival: true,
     featured: true,
   },
   {
     id: '2',
-    name: 'Urban Runner',
-    price: 249,
-    image: '/placeholder.svg',
-    category: 'Athletic',
+    name: 'Classic Street',
+    price: 199,
+    originalPrice: 249,
+    image: mensCasualNavy,
+    category: 'Casual',
+    gender: 'men',
     sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Black', 'White', 'Navy'],
-    description: 'Lightweight running shoe perfect for city streets',
+    colors: [
+      {
+        name: 'Navy/White',
+        value: '#1B365D',
+        images: [mensCasualNavy, mensCasualNavy]
+      },
+      {
+        name: 'White/Gray',
+        value: '#FFFFFF',
+        images: [mensCasualWhite, mensCasualWhite]
+      }
+    ],
+    description: 'Timeless casual sneaker with modern comfort technology',
+    useCases: ['Daily wear', 'Weekend outings', 'Travel', 'Casual office'],
+    isOnSale: true,
     featured: true,
   },
   {
     id: '3',
-    name: 'Classic Low',
-    price: 199,
-    image: '/placeholder.svg',
-    category: 'Low-Top',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Black', 'White', 'Gray'],
-    description: 'Timeless low-top design with modern comfort',
+    name: 'Elite Court Pro',
+    price: 349,
+    image: mensBasketballBlack,
+    category: 'Basketball',
+    gender: 'men',
+    sizes: ['8', '9', '10', '11', '12', '13', '14'],
+    colors: [
+      {
+        name: 'Black/Gold',
+        value: '#000000',
+        images: [mensBasketballBlack, mensBasketballBlack]
+      },
+      {
+        name: 'Red/White',
+        value: '#DC3545',
+        images: [mensBasketballRed, mensBasketballRed]
+      }
+    ],
+    description: 'Professional basketball shoe with superior court performance',
+    useCases: ['Basketball', 'Indoor sports', 'Athletic training', 'Street ball'],
     featured: true,
   },
   {
     id: '4',
-    name: 'Elite Court',
-    price: 349,
-    image: '/placeholder.svg',
-    category: 'Basketball',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Black', 'Gold', 'Red'],
-    description: 'Professional basketball shoe with premium materials',
+    name: 'Velocity Runner',
+    price: 279,
+    image: womensRunningPink,
+    category: 'Running',
+    gender: 'women',
+    sizes: ['5', '6', '7', '8', '9', '10', '11'],
+    colors: [
+      {
+        name: 'Pink/White',
+        value: '#E91E63',
+        images: [womensRunningPink, womensRunningPink]
+      },
+      {
+        name: 'Black/White',
+        value: '#000000',
+        images: [womensRunningBlack, womensRunningBlack]
+      }
+    ],
+    description: 'Lightweight running shoe designed for women athletes',
+    useCases: ['Running', 'Jogging', 'Cardio', 'Marathon training'],
+    isNewArrival: true,
     featured: true,
   },
   {
     id: '5',
-    name: 'Heritage Leather Boots',
-    price: 399,
-    image: brownBootsImage,
-    category: 'Boots',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['Brown', 'Black'],
-    description: 'Premium leather boots with rugged construction and timeless style',
+    name: 'Minimalist Chic',
+    price: 159,
+    originalPrice: 199,
+    image: womensCasualBeige,
+    category: 'Casual',
+    gender: 'women',
+    sizes: ['5', '6', '7', '8', '9', '10'],
+    colors: [
+      {
+        name: 'Beige/Cream',
+        value: '#D2B48C',
+        images: [womensCasualBeige, womensCasualBeige]
+      },
+      {
+        name: 'White/Gray',
+        value: '#FFFFFF',
+        images: [womensCasualWhite, womensCasualWhite]
+      }
+    ],
+    description: 'Minimalist design meets all-day comfort',
+    useCases: ['Daily wear', 'Work', 'Shopping', 'Casual dining'],
+    isOnSale: true,
     featured: true,
   },
   {
     id: '6',
-    name: 'Street Walker',
-    price: 229,
-    image: '/placeholder.svg',
-    category: 'Casual',
-    sizes: ['7', '8', '9', '10', '11', '12'],
-    colors: ['White', 'Black', 'Beige'],
-    description: 'Comfortable everyday sneaker with minimalist design',
+    name: 'Fashion Forward',
+    price: 259,
+    image: womensFashionPurple,
+    category: 'Fashion',
+    gender: 'women',
+    sizes: ['5', '6', '7', '8', '9', '10', '11'],
+    colors: [
+      {
+        name: 'Lavender/White',
+        value: '#E6E6FA',
+        images: [womensFashionPurple, womensFashionPurple]
+      },
+      {
+        name: 'Black/Gold',
+        value: '#000000',
+        images: [womensFashionBlack, womensFashionBlack]
+      }
+    ],
+    description: 'Statement sneaker that elevates any outfit',
+    useCases: ['Fashion', 'Night out', 'Social events', 'Street style'],
     featured: true,
   },
 ];
@@ -110,13 +221,13 @@ export const useStore = create<StoreState>()(
       
       addToCart: (product, size, color) => {
         const existingItem = get().cart.find(
-          item => item.id === product.id && item.selectedSize === size && item.selectedColor === color
+          item => item.id === product.id && item.selectedSize === size && item.selectedColor.name === color.name
         );
         
         if (existingItem) {
           set(state => ({
             cart: state.cart.map(item =>
-              item.id === product.id && item.selectedSize === size && item.selectedColor === color
+              item.id === product.id && item.selectedSize === size && item.selectedColor.name === color.name
                 ? { ...item, quantity: item.quantity + 1 }
                 : item
             )
@@ -131,7 +242,7 @@ export const useStore = create<StoreState>()(
       removeFromCart: (id, size, color) => {
         set(state => ({
           cart: state.cart.filter(
-            item => !(item.id === id && item.selectedSize === size && item.selectedColor === color)
+            item => !(item.id === id && item.selectedSize === size && item.selectedColor.name === color.name)
           )
         }));
       },
@@ -144,7 +255,7 @@ export const useStore = create<StoreState>()(
         
         set(state => ({
           cart: state.cart.map(item =>
-            item.id === id && item.selectedSize === size && item.selectedColor === color
+            item.id === id && item.selectedSize === size && item.selectedColor.name === color.name
               ? { ...item, quantity }
               : item
           )
@@ -159,6 +270,18 @@ export const useStore = create<StoreState>()(
       
       cartCount: () => {
         return get().cart.reduce((total, item) => total + item.quantity, 0);
+      },
+
+      getProductsByGender: (gender) => {
+        return get().products.filter(product => product.gender === gender);
+      },
+
+      getNewArrivals: () => {
+        return get().products.filter(product => product.isNewArrival);
+      },
+
+      getSaleProducts: () => {
+        return get().products.filter(product => product.isOnSale);
       },
     }),
     {
