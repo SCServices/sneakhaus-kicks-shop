@@ -2,8 +2,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// Note: AI-generated images will be imported after build system is working
-// Temporarily using placeholder paths to fix build issues
+// Import product images
+import heroSneaker from '../assets/hero-sneaker.jpg';
+import mensAthleticWhite from '../assets/mens-athletic-white.jpg';
+import mensAthleticBlack from '../assets/mens-athletic-black.jpg';
+import mensCasualNavy from '../assets/mens-casual-navy.jpg';
+import mensCasualWhite from '../assets/mens-casual-white.jpg';
+import mensBasketballBlack from '../assets/mens-basketball-black.jpg';
+import mensBasketballRed from '../assets/mens-basketball-red.jpg';
+import womensRunningPink from '../assets/womens-running-pink.jpg';
+import womensRunningBlack from '../assets/womens-running-black.jpg';
+import womensCasualBeige from '../assets/womens-casual-beige.jpg';
+import womensCasualWhite from '../assets/womens-casual-white.jpg';
+import womensFashionPurple from '../assets/womens-fashion-purple.jpg';
+import womensFashionBlack from '../assets/womens-fashion-black.jpg';
 
 export interface ProductColor {
   name: string;
@@ -48,13 +60,13 @@ interface StoreState {
   getSaleProducts: () => Product[];
 }
 
-// Enhanced product catalog - temporarily using placeholder images to fix build
+// Enhanced product catalog with real images
 const mockProducts: Product[] = [
   {
     id: '1',
     name: 'Urban Athletic Pro',
     price: 299,
-    image: '/placeholder.svg',
+    image: heroSneaker,
     category: 'Athletic',
     gender: 'men',
     sizes: ['7', '8', '9', '10', '11', '12', '13'],
@@ -62,12 +74,12 @@ const mockProducts: Product[] = [
       {
         name: 'White/Gray',
         value: '#F8F9FA',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensAthleticWhite, mensAthleticWhite]
       },
       {
         name: 'Black/Gray', 
         value: '#212529',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensAthleticBlack, mensAthleticBlack]
       }
     ],
     description: 'Premium athletic sneaker engineered for peak performance',
@@ -80,7 +92,7 @@ const mockProducts: Product[] = [
     name: 'Classic Street',
     price: 199,
     originalPrice: 249,
-    image: '/placeholder.svg',
+    image: mensCasualNavy,
     category: 'Casual',
     gender: 'men',
     sizes: ['7', '8', '9', '10', '11', '12'],
@@ -88,12 +100,12 @@ const mockProducts: Product[] = [
       {
         name: 'Navy/White',
         value: '#1B365D',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensCasualNavy, mensCasualNavy]
       },
       {
         name: 'White/Gray',
         value: '#FFFFFF',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensCasualWhite, mensCasualWhite]
       }
     ],
     description: 'Timeless casual sneaker with modern comfort technology',
@@ -105,7 +117,7 @@ const mockProducts: Product[] = [
     id: '3',
     name: 'Elite Court Pro',
     price: 349,
-    image: '/placeholder.svg',
+    image: mensBasketballBlack,
     category: 'Basketball',
     gender: 'men',
     sizes: ['8', '9', '10', '11', '12', '13', '14'],
@@ -113,12 +125,12 @@ const mockProducts: Product[] = [
       {
         name: 'Black/Gold',
         value: '#000000',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensBasketballBlack, mensBasketballBlack]
       },
       {
         name: 'Red/White',
         value: '#DC3545',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [mensBasketballRed, mensBasketballRed]
       }
     ],
     description: 'Professional basketball shoe with superior court performance',
@@ -129,7 +141,7 @@ const mockProducts: Product[] = [
     id: '4',
     name: 'Velocity Runner',
     price: 279,
-    image: '/placeholder.svg',
+    image: womensRunningPink,
     category: 'Running',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10', '11'],
@@ -137,12 +149,12 @@ const mockProducts: Product[] = [
       {
         name: 'Pink/White',
         value: '#E91E63',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensRunningPink, womensRunningPink]
       },
       {
         name: 'Black/White',
         value: '#000000',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensRunningBlack, womensRunningBlack]
       }
     ],
     description: 'Lightweight running shoe designed for women athletes',
@@ -155,7 +167,7 @@ const mockProducts: Product[] = [
     name: 'Minimalist Chic',
     price: 159,
     originalPrice: 199,
-    image: '/placeholder.svg',
+    image: womensCasualBeige,
     category: 'Casual',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10'],
@@ -163,12 +175,12 @@ const mockProducts: Product[] = [
       {
         name: 'Beige/Cream',
         value: '#D2B48C',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensCasualBeige, womensCasualBeige]
       },
       {
         name: 'White/Gray',
         value: '#FFFFFF',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensCasualWhite, womensCasualWhite]
       }
     ],
     description: 'Minimalist design meets all-day comfort',
@@ -180,7 +192,7 @@ const mockProducts: Product[] = [
     id: '6',
     name: 'Fashion Forward',
     price: 259,
-    image: '/placeholder.svg',
+    image: womensFashionPurple,
     category: 'Fashion',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10', '11'],
@@ -188,12 +200,12 @@ const mockProducts: Product[] = [
       {
         name: 'Lavender/White',
         value: '#E6E6FA',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensFashionPurple, womensFashionPurple]
       },
       {
         name: 'Black/Gold',
         value: '#000000',
-        images: ['/placeholder.svg', '/placeholder.svg']
+        images: [womensFashionBlack, womensFashionBlack]
       }
     ],
     description: 'Statement sneaker that elevates any outfit',
