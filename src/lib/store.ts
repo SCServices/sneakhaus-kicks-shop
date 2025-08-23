@@ -16,6 +16,9 @@ import womensCasualBeige from '../assets/womens-casual-beige.jpg';
 import womensCasualWhite from '../assets/womens-casual-white.jpg';
 import womensFashionPurple from '../assets/womens-fashion-purple.jpg';
 import womensFashionBlack from '../assets/womens-fashion-black.jpg';
+import shoeCareKit from '../assets/shoe-care-kit.jpg';
+import athleticSocksPack from '../assets/athletic-socks-pack.jpg';
+import shoeProtectorSpray from '../assets/shoe-protector-spray.jpg';
 
 export interface ProductColor {
   name: string;
@@ -116,6 +119,7 @@ interface StoreState {
   searchProducts: (query?: string) => Product[];
   // Recommendations
   getRecommendedProducts: (productId: string, limit?: number) => Product[];
+  getUpsellProducts: () => Product[];
   
   // Checkout methods
   setCheckoutStep: (step: number) => void;
@@ -299,6 +303,72 @@ const mockProducts: Product[] = [
     useCases: ['Fashion', 'Night out', 'Social events', 'Street style'],
     featured: true,
   },
+  // Upsell/Accessory Products
+  {
+    id: 'acc-1',
+    name: 'Premium Shoe Care Kit',
+    price: 24.99,
+    originalPrice: 34.99,
+    image: shoeCareKit,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['One Size'],
+    stock: { 'One Size': 50 },
+    rating: 4.8,
+    reviewCount: 89,
+    colors: [
+      {
+        name: 'Black',
+        value: '#000000',
+        images: [shoeCareKit]
+      }
+    ],
+    description: 'Professional-grade shoe care kit with cleaning supplies, brushes, and premium polish',
+    useCases: ['Shoe maintenance', 'Sneaker care', 'Leather protection', 'Daily upkeep'],
+    isOnSale: true,
+  },
+  {
+    id: 'acc-2', 
+    name: 'Athletic Socks (3-Pack)',
+    price: 19.99,
+    image: athleticSocksPack,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['S', 'M', 'L', 'XL'],
+    stock: { 'S': 25, 'M': 40, 'L': 35, 'XL': 20 },
+    rating: 4.6,
+    reviewCount: 134,
+    colors: [
+      {
+        name: 'Mixed Pack',
+        value: '#666666',
+        images: [athleticSocksPack]
+      }
+    ],
+    description: 'Moisture-wicking athletic socks designed for comfort and performance during workouts',
+    useCases: ['Athletic training', 'Running', 'Gym workouts', 'Daily wear'],
+  },
+  {
+    id: 'acc-3',
+    name: 'Shoe Protection Spray',
+    price: 16.99,
+    image: shoeProtectorSpray,
+    category: 'Accessories', 
+    gender: 'unisex',
+    sizes: ['One Size'],
+    stock: { 'One Size': 30 },
+    rating: 4.5,
+    reviewCount: 67,
+    colors: [
+      {
+        name: 'Clear',
+        value: '#FFFFFF',
+        images: [shoeProtectorSpray]
+      }
+    ],
+    description: 'Advanced protection spray that shields shoes from water, stains, and daily wear',
+    useCases: ['Shoe protection', 'Stain prevention', 'Weather resistance', 'Maintenance'],
+  },
 ];
 
 export const useStore = create<StoreState>()(
@@ -451,6 +521,10 @@ export const useStore = create<StoreState>()(
           )
           .sort((a, b) => (b.rating || 0) - (a.rating || 0))
           .slice(0, limit);
+      },
+
+      getUpsellProducts: () => {
+        return get().products.filter(product => product.category === 'Accessories');
       },
       
       // Checkout methods

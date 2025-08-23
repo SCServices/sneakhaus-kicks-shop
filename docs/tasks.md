@@ -98,27 +98,16 @@
 - Update checkout display to use `item.selectedColorImage` instead of `product.images[0]`
 - Ensure cart page also reflects correct color variant images
 
-### Bug 2: Generic Upsells with No Individual Selection
+### Bug 2: Generic Upsells with No Individual Selection ✅
 **Current Issue:** Upsell modal shows generic text-only accessories with no imagery and forces all-or-nothing selection
-**Steps to Reproduce:**
-1. Complete checkout flow until upsell modal appears
-2. Observe generic "Premium Shoe Care Kit" and "Athletic Socks" text-only items
-3. Try to select only one item (not possible - only "Add & Complete" or "No Thanks")
-
-**Expected Behavior:** 
-- Upsells should have product images and visual appeal
-- Users should be able to individually select/deselect each upsell item
-- Each upsell should have quantity controls
-
-**Fix Plan:**
-- Generate AI images for upsell products (shoe care kit, athletic socks, etc.)
-- Create proper upsell product data structure with images, descriptions, prices
-- Redesign upsell modal with:
-  - Individual checkboxes for each item
-  - Product images and better descriptions
-  - Quantity selectors for each item
-  - Update total pricing dynamically as items are selected/deselected
-- Add upsell products to main product catalog for consistency
+**COMPLETED** - Enhanced upsell modal with:
+- Generated AI images for all accessories (shoe care kit, athletic socks, protector spray)
+- Added accessories as proper products to catalog with full details
+- Individual checkboxes for each upsell item  
+- Quantity controls with +/- buttons
+- Dynamic pricing calculation showing subtotals
+- Visual selection states with highlighting
+- Proper integration with cart system
 
 ### Bug 3: Upsell Items Not Added to Cart/Total
 **Current Issue:** After selecting upsells and clicking "Add & Complete", items don't appear in final order total and user isn't returned to cart for review

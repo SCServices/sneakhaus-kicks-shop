@@ -8,9 +8,10 @@ import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Separator } from '../components/ui/separator';
 import { Badge } from '../components/ui/badge';
+import { Checkbox } from '../components/ui/checkbox';
 import { Progress } from '../components/ui/progress';
 import { useToast } from '../hooks/use-toast';
-import { ArrowLeft, CreditCard, Truck, Shield, Check } from 'lucide-react';
+import { ArrowLeft, CreditCard, Truck, Shield, Check, Minus, Plus } from 'lucide-react';
 
 const steps = [
   { id: 1, title: 'Cart Review', completed: true },
@@ -22,8 +23,9 @@ const steps = [
 export default function Checkout() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { cart, cartTotal, checkoutStep, setCheckoutStep, createOrder } = useStore();
+  const { cart, cartTotal, checkoutStep, setCheckoutStep, createOrder, getUpsellProducts, addToCart } = useStore();
   const [currentStep, setCurrentStep] = useState(checkoutStep || 2);
+  const [selectedUpsells, setSelectedUpsells] = useState<{[key: string]: {selected: boolean, quantity: number, size: string}}>({});
   
   const [shippingInfo, setShippingInfo] = useState({
     firstName: '',
@@ -94,6 +96,53 @@ export default function Checkout() {
         variant: "destructive"
       });
     }
+  };
+
+  const upsellProducts = getUpsellProducts();
+
+  const toggleUpsellSelection = (productId: string, defaultSize: string) => {
+    setSelectedUpsells(prev => ({
+      ...prev,
+      [productId]: prev[productId] 
+        ? { ...prev[productId], selected: !prev[productId].selected }
+        : { selected: true, quantity: 1, size: defaultSize }
+    }));
+  };
+
+  const updateUpsellQuantity = (productId: string, quantity: number) => {
+    setSelectedUpsells(prev => ({
+      ...prev,
+      [productId]: prev[productId] 
+        ? { ...prev[productId], quantity: Math.max(1, quantity) }
+        : { selected: true, quantity: Math.max(1, quantity), size: 'One Size' }
+    }));
+  };
+
+  const getUpsellTotal = () => {
+    return Object.entries(selectedUpsells).reduce((total, [productId, selection]) => {
+      if (selection.selected) {
+        const product = upsellProducts.find(p => p.id === productId);
+        return total + (product?.price || 0) * selection.quantity;
+      }
+      return total;
+    }, 0);
+  };
+
+  const handleUpsellComplete = () => {
+    // Add selected upsells to cart
+    Object.entries(selectedUpsells).forEach(([productId, selection]) => {
+      if (selection.selected) {
+        const product = upsellProducts.find(p => p.id === productId);
+        if (product) {
+          for (let i = 0; i < selection.quantity; i++) {
+            addToCart(product, selection.size, product.colors[0]);
+          }
+        }
+      }
+    });
+
+    // Navigate back to cart to show updated totals
+    navigate('/cart');
   };
 
   if (cart.length === 0) {
@@ -356,43 +405,128 @@ export default function Checkout() {
 
       {/* Upsell Modal */}
       {showUpsell && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="max-w-md mx-4 p-6">
-            <h3 className="text-lg font-semibold mb-4">Complete Your Look</h3>
-            <p className="text-muted-foreground mb-4">
-              Don't forget these popular accessories to go with your order!
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <h3 className="text-xl font-semibold mb-2">Complete Your Look</h3>
+            <p className="text-muted-foreground mb-6">
+              Add these popular accessories to your order and save!
             </p>
             
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <p className="font-medium">Premium Shoe Care Kit</p>
-                  <p className="text-sm text-muted-foreground">Keep your sneakers fresh</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">$24.99</p>
-                  <p className="text-xs text-muted-foreground line-through">$34.99</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <p className="font-medium">Athletic Socks (3-Pack)</p>
-                  <p className="text-sm text-muted-foreground">Moisture-wicking comfort</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">$19.99</p>
-                </div>
-              </div>
+            <div className="space-y-4 mb-6">
+              {upsellProducts.map((product) => {
+                const isSelected = selectedUpsells[product.id]?.selected || false;
+                const quantity = selectedUpsells[product.id]?.quantity || 1;
+                const defaultSize = product.sizes[0];
+                
+                return (
+                  <div 
+                    key={product.id} 
+                    className={`border rounded-lg p-4 transition-all ${
+                      isSelected ? 'border-primary bg-primary/5' : 'border-muted'
+                    }`}
+                  >
+                    <div className="flex items-start space-x-4">
+                      {/* Checkbox */}
+                      <div className="pt-1">
+                        <Checkbox
+                          id={`upsell-${product.id}`}
+                          checked={isSelected}
+                          onCheckedChange={() => toggleUpsellSelection(product.id, defaultSize)}
+                        />
+                      </div>
+                      
+                      {/* Product Image */}
+                      <div className="w-20 h-20 bg-brand-gray-light rounded-lg overflow-hidden flex-shrink-0">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      {/* Product Details */}
+                      <div className="flex-1 space-y-2">
+                        <div>
+                          <h4 className="font-semibold text-lg">{product.name}</h4>
+                          <p className="text-sm text-muted-foreground">{product.description}</p>
+                        </div>
+                        
+                        <div className="flex items-center space-x-4">
+                          <div className="text-right">
+                            {product.originalPrice && (
+                              <p className="text-xs text-muted-foreground line-through">
+                                ${product.originalPrice.toFixed(2)}
+                              </p>
+                            )}
+                            <p className="font-semibold text-lg">${product.price.toFixed(2)}</p>
+                          </div>
+                          
+                          {product.isOnSale && (
+                            <Badge variant="destructive" className="text-xs">
+                              Sale
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {/* Quantity Controls */}
+                        {isSelected && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-muted-foreground">Qty:</span>
+                            <div className="flex items-center border rounded">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => updateUpsellQuantity(product.id, quantity - 1)}
+                                disabled={quantity <= 1}
+                              >
+                                <Minus className="h-3 w-3" />
+                              </Button>
+                              <span className="px-3 text-sm font-medium">{quantity}</span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => updateUpsellQuantity(product.id, quantity + 1)}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <span className="text-sm text-muted-foreground ml-auto">
+                              Subtotal: ${(product.price * quantity).toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             
-            <div className="flex space-x-3">
-              <Button variant="outline" onClick={completeOrder} className="flex-1">
-                No Thanks
-              </Button>
-              <Button onClick={completeOrder} className="flex-1">
-                Add & Complete
-              </Button>
+            {/* Summary and Actions */}
+            <div className="border-t pt-4">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-semibold">Accessories Total:</span>
+                <span className="text-xl font-bold">${getUpsellTotal().toFixed(2)}</span>
+              </div>
+              
+              <div className="flex space-x-3">
+                <Button 
+                  variant="outline" 
+                  onClick={completeOrder} 
+                  className="flex-1"
+                >
+                  No Thanks
+                </Button>
+                <Button 
+                  onClick={handleUpsellComplete} 
+                  className="flex-1"
+                  disabled={Object.values(selectedUpsells).every(selection => !selection.selected)}
+                >
+                  Add to Cart ({Object.values(selectedUpsells).filter(s => s.selected).length} items)
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
