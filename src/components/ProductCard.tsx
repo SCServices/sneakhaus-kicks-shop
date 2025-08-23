@@ -12,33 +12,58 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
+  // Add comprehensive defensive checks at the top
+  console.log('ProductCard rendering with product:', product);
+  
+  if (!product) {
+    console.error('ProductCard: No product provided');
+    return <div>Error: No product data</div>;
+  }
+  
+  if (!product.colors || !Array.isArray(product.colors) || product.colors.length === 0) {
+    console.error('ProductCard: Invalid colors array:', product);
+    return <div>Error: Product colors not available</div>;
+  }
+  
+  if (!product.sizes || !Array.isArray(product.sizes) || product.sizes.length === 0) {
+    console.error('ProductCard: Invalid sizes array:', product);
+    return <div>Error: Product sizes not available</div>;
+  }
+
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
-  // Add defensive check for product data
-  const [selectedSize, setSelectedSize] = useState(
-    product.sizes && product.sizes.length > 0 ? product.sizes[0] : ''
-  );
+  // Safe initialization of selected size
+  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
 
-  // Add defensive check for colors array
-  if (!product.colors || product.colors.length === 0) {
-    console.error('Product missing colors array:', product);
-    return <div>Error: Product data incomplete</div>;
+  // Safe access to active color with bounds checking
+  const safeActiveColorIndex = Math.max(0, Math.min(activeColorIndex, product.colors.length - 1));
+  const activeColor = product.colors[safeActiveColorIndex];
+  
+  // Additional safety check for activeColor
+  if (!activeColor || !activeColor.images || !Array.isArray(activeColor.images) || activeColor.images.length === 0) {
+    console.error('ProductCard: Invalid active color or images:', { activeColor, safeActiveColorIndex });
+    return <div>Error: Product images not available</div>;
   }
 
-  // Get the current active color object
-  const activeColor = product.colors[activeColorIndex];
-
   const handleColorChange = (index: number) => {
-    setActiveColorIndex(index);
-    setActiveImageIndex(0);
+    // Add bounds checking for color index
+    if (index >= 0 && index < product.colors.length) {
+      setActiveColorIndex(index);
+      setActiveImageIndex(0);
+    } else {
+      console.warn('Invalid color index:', index, 'Max index:', product.colors.length - 1);
+    }
   };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    setActiveImageIndex(1);
+    // Safely check if second image exists before switching
+    if (activeColor.images && activeColor.images.length > 1) {
+      setActiveImageIndex(1);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -68,7 +93,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <div className="relative w-full h-full">
             <motion.img
               key={`${activeColor.name}-${activeImageIndex}`}
-              src={activeColor.images[activeImageIndex]}
+              src={activeColor.images[Math.min(activeImageIndex, activeColor.images.length - 1)]}
               alt={`${product.name} in ${activeColor.name}`}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               initial={{ opacity: 0, scale: 1 }}

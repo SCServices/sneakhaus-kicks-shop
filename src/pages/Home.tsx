@@ -19,16 +19,32 @@ const Home = () => {
   const featuredProducts = products.filter(product => product.featured);
 
   const handleQuickAdd = (product: any, size?: string, color?: ProductColor) => {
-    // Add defensive checks to prevent undefined errors
     console.log('handleQuickAdd called with:', { product, size, color });
     
-    if (!product || !product.sizes || !product.colors) {
-      console.error('Invalid product data:', product);
+    // Comprehensive validation
+    if (!product) {
+      console.error('handleQuickAdd: No product provided');
+      return;
+    }
+    
+    if (!product.sizes || !Array.isArray(product.sizes) || product.sizes.length === 0) {
+      console.error('handleQuickAdd: Invalid sizes array:', product);
+      return;
+    }
+    
+    if (!product.colors || !Array.isArray(product.colors) || product.colors.length === 0) {
+      console.error('handleQuickAdd: Invalid colors array:', product);
       return;
     }
     
     const selectedSize = size || product.sizes[0];
     const selectedColor = color || product.colors[0];
+    
+    if (!selectedSize || !selectedColor) {
+      console.error('handleQuickAdd: Could not determine size or color', { selectedSize, selectedColor });
+      return;
+    }
+    
     addToCart(product, selectedSize, selectedColor);
   };
 
