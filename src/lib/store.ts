@@ -19,6 +19,10 @@ import womensFashionBlack from '../assets/womens-fashion-black.jpg';
 import shoeCareKit from '../assets/shoe-care-kit.jpg';
 import athleticSocksPack from '../assets/athletic-socks-pack.jpg';
 import shoeProtectorSpray from '../assets/shoe-protector-spray.jpg';
+import shoeCareKitPremium from '../assets/shoe-care-premium-kit.jpg';
+import premiumAthleticSocks from '../assets/premium-athletic-socks.jpg';
+import waterproofProtectorSpray from '../assets/waterproof-protector-spray.jpg';
+import premiumShoeInsoles from '../assets/premium-shoe-insoles.jpg';
 
 export interface ProductColor {
   name: string;
@@ -369,6 +373,90 @@ const mockProducts: Product[] = [
     ],
     description: 'Advanced protection spray that shields shoes from water, stains, and daily wear',
     useCases: ['Shoe protection', 'Stain prevention', 'Weather resistance', 'Maintenance'],
+  },
+  {
+    id: 'acc1',
+    name: 'Premium Shoe Care Kit',
+    price: 49,
+    image: shoeCareKitPremium,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['One Size'],
+    stock: { 'One Size': 25 },
+    rating: 4.7,
+    reviewCount: 156,
+    colors: [
+      {
+        name: 'Natural',
+        value: '#8B4513',
+        images: [shoeCareKitPremium]
+      }
+    ],
+    description: 'Complete shoe care solution with premium polish, cleaning cloth, and professional brush',
+    useCases: ['Shoe maintenance', 'Leather care', 'Cleaning', 'Protection'],
+  },
+  {
+    id: 'acc2',
+    name: 'Athletic Performance Socks',
+    price: 29,
+    image: premiumAthleticSocks,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['S', 'M', 'L', 'XL'],
+    stock: { 'S': 30, 'M': 45, 'L': 40, 'XL': 20 },
+    rating: 4.5,
+    reviewCount: 89,
+    colors: [
+      {
+        name: 'Black/White Pack',
+        value: '#000000',
+        images: [premiumAthleticSocks]
+      }
+    ],
+    description: 'Premium moisture-wicking athletic socks designed for maximum comfort and performance',
+    useCases: ['Athletic training', 'Running', 'Daily wear', 'Gym workouts'],
+  },
+  {
+    id: 'acc3',
+    name: 'Waterproof Protector Spray',
+    price: 25,
+    image: waterproofProtectorSpray,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['250ml'],
+    stock: { '250ml': 50 },
+    rating: 4.6,
+    reviewCount: 234,
+    colors: [
+      {
+        name: 'Clear',
+        value: '#F0F0F0',
+        images: [waterproofProtectorSpray]
+      }
+    ],
+    description: 'Advanced waterproof protection spray for all shoe materials, prevents stains and water damage',
+    useCases: ['Weather protection', 'Stain prevention', 'Material preservation', 'Maintenance'],
+  },
+  {
+    id: 'acc4',
+    name: 'Comfort Gel Insoles',
+    price: 35,
+    image: premiumShoeInsoles,
+    category: 'Accessories',
+    gender: 'unisex',
+    sizes: ['6-7', '8-9', '10-11', '12-13'],
+    stock: { '6-7': 20, '8-9': 30, '10-11': 25, '12-13': 15 },
+    rating: 4.8,
+    reviewCount: 312,
+    colors: [
+      {
+        name: 'Blue/Gray',
+        value: '#4A90E2',
+        images: [premiumShoeInsoles]
+      }
+    ],
+    description: 'Premium gel cushioning insoles with arch support for all-day comfort and performance',
+    useCases: ['Comfort enhancement', 'Arch support', 'Shock absorption', 'Athletic performance'],
   },
 ];
 
