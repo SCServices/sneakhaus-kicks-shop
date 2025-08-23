@@ -9,6 +9,10 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import ProductDetail from "./pages/ProductDetail";
+import Men from "./pages/Men";
+import Women from "./pages/Women";
+import NewArrivals from "./pages/NewArrivals";
+import Sale from "./pages/Sale";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +29,10 @@ const App = () => (
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/men" element={<Men />} />
+              <Route path="/women" element={<Women />} />
+              <Route path="/new-arrivals" element={<NewArrivals />} />
+              <Route path="/sale" element={<Sale />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
