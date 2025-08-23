@@ -141,8 +141,21 @@ export default function Checkout() {
       }
     });
 
-    // Navigate back to cart to show updated totals
-    navigate('/cart');
+    // Create order immediately with updated cart (including upsells)
+    try {
+      const orderId = createOrder(shippingInfo, paymentMethod);
+      toast({
+        title: "Order Placed Successfully!",
+        description: `Your order ${orderId} has been confirmed with selected accessories.`,
+      });
+      navigate(`/order-confirmation/${orderId}`);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (cart.length === 0) {
@@ -524,7 +537,7 @@ export default function Checkout() {
                   className="flex-1"
                   disabled={Object.values(selectedUpsells).every(selection => !selection.selected)}
                 >
-                  Add to Cart ({Object.values(selectedUpsells).filter(s => s.selected).length} items)
+                  Add & Complete Order ({Object.values(selectedUpsells).filter(s => s.selected).length} items)
                 </Button>
               </div>
             </div>
