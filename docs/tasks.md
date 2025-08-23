@@ -85,3 +85,56 @@ Phase 5: Enhanced Features - Add product search functionality, wishlist/favorite
 
 ### What is the next step:
 All core e-commerce functionality is now complete. Consider adding user authentication, payment integration, or advanced features like product reviews, advanced filtering, or analytics.
+
+## Phase 6: Checkout & Account System
+- [ ] Create checkout page with order summary and form
+- [ ] Add shipping information form (guest checkout)
+- [ ] Add payment method selection (mock/demo only)
+- [ ] Implement upsell modal during checkout flow
+- [ ] Add order confirmation page
+- [ ] Create mock account creation at checkout completion
+- [ ] Add order history for registered users
+- [ ] Implement guest order tracking by email
+- [ ] Add checkout progress indicator
+- [ ] Handle cart persistence and checkout flow state
+
+## Phase 7: Final Polish & UX
+- [ ] Add loading states and error handling throughout app
+- [ ] Implement form validation for all user inputs
+- [ ] Add success animations and micro-interactions
+- [ ] Create 404 and error pages with proper styling
+- [ ] Add mobile-specific optimizations
+- [ ] Implement accessibility improvements (ARIA labels, keyboard navigation)
+- [ ] Add email notifications (mock/demo) for order confirmations
+- [ ] Create customer support/FAQ page
+- [ ] Add terms of service and privacy policy pages
+- [ ] Final testing and bug fixes
+
+## User Flow Specifications
+
+### Primary Guest User Journey:
+1. **Homepage** → Browse featured products, social proof, call-to-actions
+2. **Product Discovery** → Filter by category (Men's, Women's, New Arrivals, Sale) or search
+3. **Product Details** → View specs, select size/color, add to cart, see recommendations
+4. **Cart Review** → Modify quantities, remove items, see totals, proceed to checkout
+5. **Checkout Flow**:
+   - Order summary with line items
+   - Shipping information form
+   - Upsell modal (recommended accessories/products)
+   - Payment method selection (mock)
+   - Order confirmation with tracking info
+6. **Post-Purchase** → Option to create account, order tracking, email confirmation
+
+### Store State Requirements:
+- Cart persistence across sessions
+- Order management (create, store, retrieve orders)
+- User account data (optional registration)
+- Order history and tracking
+- Email/contact information for guest orders
+
+### Technical Implementation Notes:
+- All payment processing should be mock/demo only (no real payment integration)
+- Account creation should be optional and simplified
+- Order data can be stored in localStorage for demo purposes
+- Email notifications should be simulated/logged only
+- Focus on UX flow rather than backend integration
