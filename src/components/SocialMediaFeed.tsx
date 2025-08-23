@@ -1,36 +1,39 @@
 import { Instagram, MessageCircle, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import socialGymGuy from '../assets/social-gym-guy.jpg';
+import socialRunningGirl from '../assets/social-running-girl.jpg';
+import socialCityGuy from '../assets/social-city-guy.jpg';
 
 const SocialMediaFeed = () => {
   const socialPosts = [
     {
       id: 1,
-      username: '@sneakerhead_mike',
+      username: '@gym_warrior_mike',
       avatar: '/placeholder.svg',
-      image: '/placeholder.svg',
-      caption: 'Just copped these fire sneakers from @sneakhaus! The quality is unmatched 🔥',
-      likes: 234,
-      comments: 18,
+      image: socialGymGuy,
+      caption: 'These sneakers are perfect for my gym sessions! Amazing support and style 💪 @sneakhaus',
+      likes: 284,
+      comments: 21,
       timeAgo: '2h'
     },
     {
       id: 2,
-      username: '@urban_style_sarah',
+      username: '@runner_sarah',
       avatar: '/placeholder.svg',
-      image: '/placeholder.svg',
-      caption: 'My new favorite daily drivers. Comfort and style in perfect harmony ✨',
-      likes: 187,
-      comments: 12,
+      image: socialRunningGirl,
+      caption: 'Morning run vibes! These running shoes from @sneakhaus are incredibly comfortable 🏃‍♀️✨',
+      likes: 197,
+      comments: 15,
       timeAgo: '4h'
     },
     {
       id: 3,
-      username: '@athlete_jones',
+      username: '@urban_explorer',
       avatar: '/placeholder.svg',
-      image: '/placeholder.svg',
-      caption: 'Performance meets style. These sneakers are a game changer! 💪',
-      likes: 312,
-      comments: 25,
+      image: socialCityGuy,
+      caption: 'City walks just got better with these stylish kicks! Perfect for everyday adventures 🌆',
+      likes: 342,
+      comments: 28,
       timeAgo: '6h'
     }
   ];
