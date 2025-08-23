@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Separator } from '../components/ui/separator';
 import { Badge } from '../components/ui/badge';
 import { Checkbox } from '../components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Progress } from '../components/ui/progress';
 import { useToast } from '../hooks/use-toast';
 import { ArrowLeft, CreditCard, Truck, Shield, Check, Minus, Plus } from 'lucide-react';
@@ -42,6 +43,26 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('credit-card');
   const [showUpsell, setShowUpsell] = useState(false);
 
+  const [paymentInfo, setPaymentInfo] = useState({
+    cardNumber: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvv: '',
+    cardholderName: '',
+    billingZip: '',
+    sameAsShipping: true
+  });
+
+  const [billingAddress, setBillingAddress] = useState({
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'United States'
+  });
+
   const subtotal = cartTotal();
   const shipping = subtotal >= 200 ? 0 : 15;
   const tax = Math.round(subtotal * 0.08 * 100) / 100;
@@ -50,18 +71,49 @@ export default function Checkout() {
   const progress = (currentStep / 4) * 100;
 
   const handleInputChange = (field: string, value: string) => {
-    setShippingInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setShippingInfo(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePaymentChange = (field: string, value: string | boolean) => {
+    setPaymentInfo(prev => ({ ...prev, [field]: value }));
+    
+    // Auto-fill billing address when sameAsShipping is toggled
+    if (field === 'sameAsShipping' && value === true) {
+      setBillingAddress({
+        firstName: shippingInfo.firstName,
+        lastName: shippingInfo.lastName,
+        address: shippingInfo.address,
+        city: shippingInfo.city,
+        state: shippingInfo.state,
+        zipCode: shippingInfo.zipCode,
+        country: shippingInfo.country
+      });
+    }
+  };
+
+  const handleBillingChange = (field: string, value: string) => {
+    setBillingAddress(prev => ({ ...prev, [field]: value }));
+  };
+
+  const formatCardNumber = (value: string) => {
+    // Remove all non-numeric characters and limit to 16 digits
+    const numericValue = value.replace(/\D/g, '').slice(0, 16);
+    // Add spaces every 4 digits
+    return numericValue.replace(/(\d{4})/g, '$1 ').trim();
+  };
+
+  const formatCvv = (value: string) => {
+    // Remove all non-numeric characters and limit to 4 digits
+    return value.replace(/\D/g, '').slice(0, 4);
   };
 
   const validateShippingForm = () => {
     const required = ['firstName', 'lastName', 'email', 'address', 'city', 'state', 'zipCode'];
-    return required.every(field => shippingInfo[field].trim() !== '');
+    return required.every(field => shippingInfo[field as keyof typeof shippingInfo].trim() !== '');
   };
 
   const handleNextStep = () => {
+    // Validate shipping info for step 2
     if (currentStep === 2 && !validateShippingForm()) {
       toast({
         title: "Missing Information",
@@ -69,6 +121,54 @@ export default function Checkout() {
         variant: "destructive"
       });
       return;
+    }
+    
+    // Validate payment info for step 3
+    if (currentStep === 3 && paymentMethod === 'credit-card') {
+      if (!paymentInfo.cardholderName || !paymentInfo.cardNumber || 
+          !paymentInfo.expiryMonth || !paymentInfo.expiryYear || !paymentInfo.cvv) {
+        toast({
+          title: "Missing Payment Information",
+          description: "Please fill in all required payment fields.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate card number (remove spaces and check length)
+      const cleanCardNumber = paymentInfo.cardNumber.replace(/\s/g, '');
+      if (cleanCardNumber.length < 13 || cleanCardNumber.length > 16) {
+        toast({
+          title: "Invalid Card Number",
+          description: "Please enter a valid card number.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate CVV
+      if (paymentInfo.cvv.length < 3) {
+        toast({
+          title: "Invalid CVV",
+          description: "Please enter a valid CVV code.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate billing address if different from shipping
+      if (!paymentInfo.sameAsShipping) {
+        if (!billingAddress.firstName || !billingAddress.lastName || 
+            !billingAddress.address || !billingAddress.city || 
+            !billingAddress.state || !billingAddress.zipCode) {
+          toast({
+            title: "Missing Billing Information",
+            description: "Please fill in all required billing address fields.",
+            variant: "destructive"
+          });
+          return;
+        }
+      }
     }
     
     if (currentStep === 3) {
@@ -320,6 +420,157 @@ export default function Checkout() {
                     <Badge variant="outline">Demo</Badge>
                   </div>
                 </RadioGroup>
+                
+                {/* Credit Card Form */}
+                {paymentMethod === 'credit-card' && (
+                  <div className="mt-6 space-y-4">
+                    <Separator />
+                    <h3 className="text-lg font-medium">Card Information</h3>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="col-span-2">
+                        <Label htmlFor="cardholderName">Cardholder Name *</Label>
+                        <Input
+                          id="cardholderName"
+                          value={paymentInfo.cardholderName}
+                          onChange={(e) => handlePaymentChange('cardholderName', e.target.value)}
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      
+                      <div className="col-span-2">
+                        <Label htmlFor="cardNumber">Card Number *</Label>
+                        <Input
+                          id="cardNumber"
+                          value={paymentInfo.cardNumber}
+                          onChange={(e) => handlePaymentChange('cardNumber', formatCardNumber(e.target.value))}
+                          placeholder="1234 5678 9012 3456"
+                          maxLength={19} // 16 digits + 3 spaces
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Expiry Date *</Label>
+                        <div className="flex space-x-2">
+                          <Select value={paymentInfo.expiryMonth} onValueChange={(value) => handlePaymentChange('expiryMonth', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="MM" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 12 }, (_, i) => {
+                                const month = (i + 1).toString().padStart(2, '0');
+                                return (
+                                  <SelectItem key={month} value={month}>
+                                    {month}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                          <Select value={paymentInfo.expiryYear} onValueChange={(value) => handlePaymentChange('expiryYear', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="YYYY" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 10 }, (_, i) => {
+                                const year = (new Date().getFullYear() + i).toString();
+                                return (
+                                  <SelectItem key={year} value={year}>
+                                    {year}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="cvv">CVV *</Label>
+                        <Input
+                          id="cvv"
+                          value={paymentInfo.cvv}
+                          onChange={(e) => handlePaymentChange('cvv', formatCvv(e.target.value))}
+                          placeholder="123"
+                          maxLength={4}
+                        />
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    <h3 className="text-lg font-medium">Billing Address</h3>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="sameAsShipping"
+                        checked={paymentInfo.sameAsShipping}
+                        onCheckedChange={(checked) => handlePaymentChange('sameAsShipping', checked)}
+                      />
+                      <Label htmlFor="sameAsShipping" className="text-sm cursor-pointer">
+                        Same as shipping address
+                      </Label>
+                    </div>
+                    
+                    {!paymentInfo.sameAsShipping && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="billingFirstName">First Name *</Label>
+                          <Input
+                            id="billingFirstName"
+                            value={billingAddress.firstName}
+                            onChange={(e) => handleBillingChange('firstName', e.target.value)}
+                            placeholder="John"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingLastName">Last Name *</Label>
+                          <Input
+                            id="billingLastName"
+                            value={billingAddress.lastName}
+                            onChange={(e) => handleBillingChange('lastName', e.target.value)}
+                            placeholder="Doe"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <Label htmlFor="billingAddress">Address *</Label>
+                          <Input
+                            id="billingAddress"
+                            value={billingAddress.address}
+                            onChange={(e) => handleBillingChange('address', e.target.value)}
+                            placeholder="123 Main Street"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingCity">City *</Label>
+                          <Input
+                            id="billingCity"
+                            value={billingAddress.city}
+                            onChange={(e) => handleBillingChange('city', e.target.value)}
+                            placeholder="New York"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingState">State *</Label>
+                          <Input
+                            id="billingState"
+                            value={billingAddress.state}
+                            onChange={(e) => handleBillingChange('state', e.target.value)}
+                            placeholder="NY"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingZip">ZIP Code *</Label>
+                          <Input
+                            id="billingZip"
+                            value={billingAddress.zipCode}
+                            onChange={(e) => handleBillingChange('zipCode', e.target.value)}
+                            placeholder="10001"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <div className="flex items-center text-sm text-muted-foreground">
