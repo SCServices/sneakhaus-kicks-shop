@@ -9,6 +9,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import ProductDetail from "./pages/ProductDetail";
+import Products from "./pages/Products";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
 import NewArrivals from "./pages/NewArrivals";
@@ -32,6 +33,7 @@ const App = () => (
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
               <Route path="/men" element={<Men />} />
               <Route path="/women" element={<Women />} />
               <Route path="/new-arrivals" element={<NewArrivals />} />

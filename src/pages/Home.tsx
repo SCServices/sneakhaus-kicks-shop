@@ -102,13 +102,17 @@ const Home = () => {
             Where comfort meets luxury.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-brand-gold text-brand-black hover:bg-brand-gold-light text-lg px-8">
-              Shop Collection
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="border-white text-brand-black hover:bg-white hover:text-brand-black text-lg px-8">
-              New Arrivals
-            </Button>
+            <Link to="/products">
+              <Button size="lg" className="bg-brand-gold text-brand-black hover:bg-brand-gold-light text-lg px-8">
+                Shop Collection
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link to="/new-arrivals">
+              <Button variant="outline" size="lg" className="border-white text-brand-black hover:bg-white hover:text-brand-black text-lg px-8">
+                New Arrivals
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
