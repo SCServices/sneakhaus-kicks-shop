@@ -105,25 +105,27 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t bg-background">
-            <nav className="flex flex-col space-y-4 p-4">
+          <div className="lg:hidden border-t bg-background/95 backdrop-blur-sm">
+            <nav className="flex flex-col space-y-3 p-4 max-h-[80vh] overflow-y-auto">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`text-sm font-medium transition-smooth ${
-                    isActive(item.path) ? 'text-accent' : 'text-foreground'
+                  className={`text-base font-medium transition-smooth py-2 px-3 rounded-lg ${
+                    isActive(item.path) 
+                      ? 'text-accent bg-accent/10' 
+                      : 'text-foreground hover:bg-muted'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
-              <div className="flex items-center space-x-4 pt-4 border-t">
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="flex items-center space-x-2"
+                  className="flex items-center justify-center space-x-2 h-12"
                   onClick={() => {
                     setIsSearchOpen(true);
                     setIsMenuOpen(false);
@@ -133,9 +135,14 @@ const Header = () => {
                   <span>Search</span>
                 </Button>
                 <Link to="/wishlist" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm" className="flex items-center justify-center space-x-2 h-12 relative">
                     <Heart className="h-4 w-4" />
                     <span>Wishlist</span>
+                    {wishlist.length > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-accent text-accent-foreground text-xs">
+                        {wishlist.length}
+                      </Badge>
+                    )}
                   </Button>
                 </Link>
               </div>

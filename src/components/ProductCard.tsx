@@ -13,22 +13,16 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
-  // Add comprehensive defensive checks at the top
-  console.log('ProductCard rendering with product:', product);
-  
   if (!product) {
-    console.error('ProductCard: No product provided');
-    return <div>Error: No product data</div>;
+    return <div className="animate-pulse bg-muted rounded-lg h-96" />;
   }
   
   if (!product.colors || !Array.isArray(product.colors) || product.colors.length === 0) {
-    console.error('ProductCard: Invalid colors array:', product);
-    return <div>Error: Product colors not available</div>;
+    return <div className="animate-pulse bg-muted rounded-lg h-96" />;
   }
   
   if (!product.sizes || !Array.isArray(product.sizes) || product.sizes.length === 0) {
-    console.error('ProductCard: Invalid sizes array:', product);
-    return <div>Error: Product sizes not available</div>;
+    return <div className="animate-pulse bg-muted rounded-lg h-96" />;
   }
 
   const { toast } = useToast();
@@ -50,10 +44,9 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const safeActiveColorIndex = Math.max(0, Math.min(activeColorIndex, product.colors.length - 1));
   const activeColor = product.colors[safeActiveColorIndex];
   
-  // Additional safety check for activeColor
+  // Additional safety check for activeColor  
   if (!activeColor || !activeColor.images || !Array.isArray(activeColor.images) || activeColor.images.length === 0) {
-    console.error('ProductCard: Invalid active color or images:', { activeColor, safeActiveColorIndex });
-    return <div>Error: Product images not available</div>;
+    return <div className="animate-pulse bg-muted rounded-lg h-96" />;
   }
 
   const handleColorChange = (index: number) => {

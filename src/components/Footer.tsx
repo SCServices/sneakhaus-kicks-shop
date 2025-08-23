@@ -50,16 +50,16 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-brand-gold">Customer Service</h4>
             <div className="space-y-2">
-              <Link to="/contact" className="block text-gray-300 hover:text-white transition-smooth">
-                Contact Us
+              <Link to="/support" className="block text-gray-300 hover:text-white transition-smooth">
+                Customer Support
               </Link>
-              <Link to="/size-guide" className="block text-gray-300 hover:text-white transition-smooth">
-                Size Guide
+              <Link to="/order-tracking" className="block text-gray-300 hover:text-white transition-smooth">
+                Track Your Order
               </Link>
-              <Link to="/returns" className="block text-gray-300 hover:text-white transition-smooth">
+              <Link to="/support" className="block text-gray-300 hover:text-white transition-smooth">
                 Returns & Exchanges
               </Link>
-              <Link to="/shipping" className="block text-gray-300 hover:text-white transition-smooth">
+              <Link to="/support" className="block text-gray-300 hover:text-white transition-smooth">
                 Shipping Info
               </Link>
             </div>
@@ -71,13 +71,14 @@ const Footer = () => {
             <p className="text-gray-300 text-sm">
               Get the latest drops and exclusive offers.
             </p>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <Input 
                 placeholder="Enter your email" 
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 flex-1"
               />
-              <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light">
-                <Mail className="h-4 w-4" />
+              <Button className="bg-brand-gold text-brand-black hover:bg-brand-gold-light whitespace-nowrap">
+                <Mail className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Subscribe</span>
               </Button>
             </div>
           </div>
