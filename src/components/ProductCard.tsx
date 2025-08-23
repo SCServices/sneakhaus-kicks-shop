@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Product, ProductColor } from '@/lib/store';
+import { Product, ProductColor, useStore } from '@/lib/store';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -30,13 +31,23 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
     return <div>Error: Product sizes not available</div>;
   }
 
+  const { toast } = useToast();
+  const addToWishlist = useStore(state => state.addToWishlist);
+  const removeFromWishlist = useStore(state => state.removeFromWishlist);
+  const isInWishlist = useStore(state => state.isInWishlist);
+  const addToCompare = useStore(state => state.addToCompare);
+  const compareList = useStore(state => state.compareList);
+  const addToCart = useStore(state => state.addToCart);
+
   const [isHovered, setIsHovered] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
   // Safe initialization of selected size
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+
+  const isWishlisted = isInWishlist(product.id);
+  const isInCompareList = compareList.includes(product.id);
 
   // Safe access to active color with bounds checking
   const safeActiveColorIndex = Math.max(0, Math.min(activeColorIndex, product.colors.length - 1));
@@ -77,7 +88,51 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
       console.warn('No size selected');
       return;
     }
-    onAddToCart?.(product, selectedSize, activeColor);
+    if (onAddToCart) {
+      onAddToCart(product, selectedSize, activeColor);
+    } else {
+      addToCart(product, selectedSize, activeColor);
+      toast({
+        title: "Added to cart",
+        description: `${product.name} (Size ${selectedSize}) added to your cart.`,
+      });
+    }
+  };
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isWishlisted) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removed from wishlist",
+        description: `${product.name} removed from your wishlist.`,
+      });
+    } else {
+      addToWishlist(product.id);
+      toast({
+        title: "Added to wishlist",
+        description: `${product.name} added to your wishlist.`,
+      });
+    }
+  };
+
+  const handleCompareToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!isInCompareList) {
+      if (compareList.length >= 3) {
+        toast({
+          title: "Compare limit reached",
+          description: "You can only compare up to 3 products at once.",
+          variant: "destructive",
+        });
+        return;
+      }
+      addToCompare(product.id);
+      toast({
+        title: "Added to compare",
+        description: `${product.name} added to comparison.`,
+      });
+    }
   };
 
   return (
@@ -106,32 +161,45 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           </div>
           
           {/* Overlay Actions */}
-          <div className={`absolute inset-0 bg-black/20 flex items-center justify-center transition-smooth ${
+          <div className={`absolute inset-0 bg-black/20 flex items-center justify-center gap-2 transition-smooth ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}>
             <Button 
               className="bg-white text-brand-black hover:bg-brand-gold hover:text-white transition-smooth"
               onClick={handleAddToCart}
+              size="sm"
             >
               <ShoppingBag className="h-4 w-4 mr-2" />
               Quick Add
             </Button>
+            {!isInCompareList && compareList.length < 3 && (
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={handleCompareToggle}
+              >
+                <BarChart3 className="h-4 w-4" />
+              </Button>
+            )}
           </div>
 
-          {/* Wishlist Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`absolute top-3 right-3 bg-white/80 backdrop-blur-sm transition-smooth ${
-              isHovered ? 'opacity-100' : 'opacity-0'
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              setIsLiked(!isLiked);
-            }}
-          >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
-          </Button>
+          {/* Action Buttons */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-white/80 backdrop-blur-sm transition-smooth hover:bg-white"
+              onClick={handleWishlistToggle}
+            >
+              <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+            </Button>
+            
+            {isInCompareList && (
+              <Badge className="bg-accent text-accent-foreground text-xs px-2 py-1">
+                In Compare
+              </Badge>
+            )}
+          </div>
 
           {/* Sale Badge */}
           {product.isOnSale && (

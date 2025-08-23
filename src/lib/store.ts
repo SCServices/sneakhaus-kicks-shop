@@ -38,6 +38,9 @@ export interface Product {
   isNewArrival?: boolean;
   isOnSale?: boolean;
   featured?: boolean;
+  stock?: { [key: string]: number }; // Size-based stock levels
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface CartItem extends Product {
@@ -49,6 +52,10 @@ export interface CartItem extends Product {
 interface StoreState {
   products: Product[];
   cart: CartItem[];
+  wishlist: string[];
+  recentlyViewed: string[];
+  searchQuery: string;
+  compareList: string[];
   addToCart: (product: Product, size: string, color: ProductColor) => void;
   removeFromCart: (id: string, size: string, color: ProductColor) => void;
   updateQuantity: (id: string, size: string, color: ProductColor, quantity: number) => void;
@@ -58,6 +65,24 @@ interface StoreState {
   getProductsByGender: (gender: 'men' | 'women') => Product[];
   getNewArrivals: () => Product[];
   getSaleProducts: () => Product[];
+  // Wishlist methods
+  addToWishlist: (productId: string) => void;
+  removeFromWishlist: (productId: string) => void;
+  isInWishlist: (productId: string) => boolean;
+  getWishlistProducts: () => Product[];
+  // Recently viewed methods
+  addToRecentlyViewed: (productId: string) => void;
+  getRecentlyViewedProducts: () => Product[];
+  // Search methods
+  setSearchQuery: (query: string) => void;
+  searchProducts: (query?: string) => Product[];
+  // Compare methods
+  addToCompare: (productId: string) => void;
+  removeFromCompare: (productId: string) => void;
+  clearCompare: () => void;
+  getCompareProducts: () => Product[];
+  // Recommendations
+  getRecommendedProducts: (productId: string, limit?: number) => Product[];
 }
 
 // Enhanced product catalog with real images
@@ -70,6 +95,9 @@ const mockProducts: Product[] = [
     category: 'Athletic',
     gender: 'men',
     sizes: ['7', '8', '9', '10', '11', '12', '13'],
+    stock: { '7': 5, '8': 12, '9': 8, '10': 15, '11': 10, '12': 6, '13': 3 },
+    rating: 4.8,
+    reviewCount: 127,
     colors: [
       {
         name: 'White/Gray',
@@ -96,6 +124,9 @@ const mockProducts: Product[] = [
     category: 'Casual',
     gender: 'men',
     sizes: ['7', '8', '9', '10', '11', '12'],
+    stock: { '7': 8, '8': 15, '9': 12, '10': 18, '11': 7, '12': 4 },
+    rating: 4.5,
+    reviewCount: 89,
     colors: [
       {
         name: 'Navy/White',
@@ -121,6 +152,9 @@ const mockProducts: Product[] = [
     category: 'Basketball',
     gender: 'men',
     sizes: ['8', '9', '10', '11', '12', '13', '14'],
+    stock: { '8': 6, '9': 9, '10': 11, '11': 13, '12': 8, '13': 5, '14': 2 },
+    rating: 4.9,
+    reviewCount: 156,
     colors: [
       {
         name: 'Black/Gold',
@@ -145,6 +179,9 @@ const mockProducts: Product[] = [
     category: 'Running',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10', '11'],
+    stock: { '5': 7, '6': 14, '7': 16, '8': 12, '9': 9, '10': 6, '11': 3 },
+    rating: 4.7,
+    reviewCount: 94,
     colors: [
       {
         name: 'Pink/White',
@@ -171,6 +208,9 @@ const mockProducts: Product[] = [
     category: 'Casual',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10'],
+    stock: { '5': 10, '6': 18, '7': 15, '8': 20, '9': 12, '10': 8 },
+    rating: 4.3,
+    reviewCount: 67,
     colors: [
       {
         name: 'Beige/Cream',
@@ -196,6 +236,9 @@ const mockProducts: Product[] = [
     category: 'Fashion',
     gender: 'women',
     sizes: ['5', '6', '7', '8', '9', '10', '11'],
+    stock: { '5': 4, '6': 8, '7': 11, '8': 14, '9': 7, '10': 5, '11': 2 },
+    rating: 4.6,
+    reviewCount: 78,
     colors: [
       {
         name: 'Lavender/White',
@@ -219,6 +262,10 @@ export const useStore = create<StoreState>()(
     (set, get) => ({
       products: mockProducts,
       cart: [],
+      wishlist: [],
+      recentlyViewed: [],
+      searchQuery: '',
+      compareList: [],
       
       addToCart: (product, size, color) => {
         const existingItem = get().cart.find(
@@ -283,6 +330,105 @@ export const useStore = create<StoreState>()(
 
       getSaleProducts: () => {
         return get().products.filter(product => product.isOnSale);
+      },
+
+      // Wishlist methods
+      addToWishlist: (productId) => {
+        set(state => ({
+          wishlist: state.wishlist.includes(productId) 
+            ? state.wishlist 
+            : [...state.wishlist, productId]
+        }));
+      },
+
+      removeFromWishlist: (productId) => {
+        set(state => ({
+          wishlist: state.wishlist.filter(id => id !== productId)
+        }));
+      },
+
+      isInWishlist: (productId) => {
+        return get().wishlist.includes(productId);
+      },
+
+      getWishlistProducts: () => {
+        return get().products.filter(product => get().wishlist.includes(product.id));
+      },
+
+      // Recently viewed methods
+      addToRecentlyViewed: (productId) => {
+        set(state => {
+          const filtered = state.recentlyViewed.filter(id => id !== productId);
+          return {
+            recentlyViewed: [productId, ...filtered].slice(0, 10) // Keep only last 10
+          };
+        });
+      },
+
+      getRecentlyViewedProducts: () => {
+        return get().recentlyViewed
+          .map(id => get().products.find(p => p.id === id))
+          .filter(Boolean) as Product[];
+      },
+
+      // Search methods
+      setSearchQuery: (query) => {
+        set({ searchQuery: query });
+      },
+
+      searchProducts: (query) => {
+        const searchTerm = query || get().searchQuery;
+        if (!searchTerm.trim()) return get().products;
+        
+        const lowercaseQuery = searchTerm.toLowerCase();
+        return get().products.filter(product =>
+          product.name.toLowerCase().includes(lowercaseQuery) ||
+          product.category.toLowerCase().includes(lowercaseQuery) ||
+          product.description.toLowerCase().includes(lowercaseQuery) ||
+          product.useCases?.some(useCase => useCase.toLowerCase().includes(lowercaseQuery)) ||
+          product.gender.toLowerCase().includes(lowercaseQuery)
+        );
+      },
+
+      // Compare methods
+      addToCompare: (productId) => {
+        set(state => {
+          if (state.compareList.includes(productId) || state.compareList.length >= 3) {
+            return state;
+          }
+          return {
+            compareList: [...state.compareList, productId]
+          };
+        });
+      },
+
+      removeFromCompare: (productId) => {
+        set(state => ({
+          compareList: state.compareList.filter(id => id !== productId)
+        }));
+      },
+
+      clearCompare: () => {
+        set({ compareList: [] });
+      },
+
+      getCompareProducts: () => {
+        return get().products.filter(product => get().compareList.includes(product.id));
+      },
+
+      // Recommendations
+      getRecommendedProducts: (productId, limit = 3) => {
+        const currentProduct = get().products.find(p => p.id === productId);
+        if (!currentProduct) return [];
+
+        return get().products
+          .filter(product => 
+            product.id !== productId && 
+            (product.gender === currentProduct.gender || 
+             product.category === currentProduct.category)
+          )
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, limit);
       },
     }),
     {

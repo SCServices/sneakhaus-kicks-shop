@@ -8,6 +8,8 @@ import { TextRotate } from '@/components/ui/text-rotate';
 import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect';
 import { StaggerTestimonials } from '@/components/ui/stagger-testimonials';
 import { motion } from 'framer-motion';
+import RecentlyViewed from '@/components/RecentlyViewed';
+import Footer from '@/components/Footer';
 import heroImage from '@/assets/hero-sneaker.jpg';
 // Video will be added when available
 import collectionImage from '@/assets/collection-banner.jpg';

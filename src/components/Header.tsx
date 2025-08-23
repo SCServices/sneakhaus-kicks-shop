@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, Heart, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useStore } from '@/lib/store';
+import SearchBar from '@/components/SearchBar';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const cartCount = useStore(state => state.cartCount());
+  const wishlist = useStore(state => state.wishlist);
+  const compareList = useStore(state => state.compareList);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -45,14 +50,46 @@ const Header = () => {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <Search className="h-5 w-5" />
-            </Button>
+          <div className="flex items-center space-x-2">
+            <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <Search className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Search Products</DialogTitle>
+                </DialogHeader>
+                <SearchBar onClose={() => setIsSearchOpen(false)} autoFocus />
+              </DialogContent>
+            </Dialog>
 
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <User className="h-5 w-5" />
             </Button>
+
+            <Link to="/wishlist">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="h-5 w-5" />
+                {wishlist.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-accent text-accent-foreground text-xs">
+                    {wishlist.length}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+
+            <Link to="/compare">
+              <Button variant="ghost" size="icon" className="relative">
+                <BarChart3 className="h-5 w-5" />
+                {compareList.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-accent text-accent-foreground text-xs">
+                    {compareList.length}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
 
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
@@ -94,14 +131,30 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex items-center space-x-4 pt-4 border-t">
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex items-center space-x-2"
+                  onClick={() => {
+                    setIsSearchOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                >
                   <Search className="h-4 w-4" />
                   <span>Search</span>
                 </Button>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                  <User className="h-4 w-4" />
-                  <span>Account</span>
-                </Button>
+                <Link to="/wishlist" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <Heart className="h-4 w-4" />
+                    <span>Wishlist</span>
+                  </Button>
+                </Link>
+                <Link to="/compare" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Compare</span>
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

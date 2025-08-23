@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, ShoppingBag, Star, Truck, Shield, RotateCcw, ZoomIn, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,19 +8,37 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStore, ProductColor } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import ProductRecommendations from '@/components/ProductRecommendations';
+import { useToast } from '@/hooks/use-toast';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, addToCart } = useStore();
+  const { toast: toastHook } = useToast();
+  const { 
+    products, 
+    addToCart, 
+    addToWishlist, 
+    removeFromWishlist, 
+    isInWishlist,
+    addToRecentlyViewed 
+  } = useStore();
   
   const product = products.find(p => p.id === id);
   
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+
+  // Track recently viewed when component mounts
+  useEffect(() => {
+    if (product && id) {
+      addToRecentlyViewed(id);
+    }
+  }, [id, product, addToRecentlyViewed]);
+
+  const isWishlisted = product ? isInWishlist(product.id) : false;
 
   if (!product) {
     return (
@@ -245,10 +263,24 @@ const ProductDetail = () => {
             <Button
               variant="outline"
               size="lg"
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={() => {
+                if (isWishlisted) {
+                  removeFromWishlist(product.id);
+                  toastHook({
+                    title: "Removed from wishlist",
+                    description: `${product.name} removed from your wishlist.`,
+                  });
+                } else {
+                  addToWishlist(product.id);
+                  toastHook({
+                    title: "Added to wishlist", 
+                    description: `${product.name} added to your wishlist.`,
+                  });
+                }
+              }}
               className="h-12 px-6"
             >
-              <Heart className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+              <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
             </Button>
           </div>
 
@@ -450,6 +482,9 @@ const ProductDetail = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Product Recommendations */}
+      <ProductRecommendations productId={product.id} />
     </div>
   );
 };

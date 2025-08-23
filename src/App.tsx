@@ -13,6 +13,9 @@ import Men from "./pages/Men";
 import Women from "./pages/Women";
 import NewArrivals from "./pages/NewArrivals";
 import Sale from "./pages/Sale";
+import Search from "./pages/Search";
+import Wishlist from "./pages/Wishlist";
+import Compare from "./pages/Compare";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +36,9 @@ const App = () => (
               <Route path="/women" element={<Women />} />
               <Route path="/new-arrivals" element={<NewArrivals />} />
               <Route path="/sale" element={<Sale />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/compare" element={<Compare />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
