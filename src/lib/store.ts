@@ -136,6 +136,7 @@ interface StoreState {
   createUser: (email: string, firstName: string, lastName: string) => User;
   loginUser: (user: User) => void;
   logoutUser: () => void;
+  resetStore: () => void;
 }
 
 // Enhanced product catalog with real images
@@ -540,7 +541,12 @@ export const useStore = create<StoreState>()(
       },
 
       getAccessories: () => {
-        return get().products.filter(product => product.category === 'Accessories');
+        const allProducts = get().products;
+        const accessories = allProducts.filter(product => product.category === 'Accessories');
+        console.log('Store - Total products:', allProducts.length);
+        console.log('Store - Accessories found:', accessories.length);
+        console.log('Store - All product categories:', allProducts.map(p => ({ id: p.id, name: p.name, category: p.category })));
+        return accessories;
       },
 
       // Wishlist methods
@@ -694,6 +700,20 @@ export const useStore = create<StoreState>()(
       
       logoutUser: () => {
         set({ currentUser: null });
+      },
+      
+      // Debug function to reset store and reload fresh data
+      resetStore: () => {
+        set({
+          products: mockProducts,
+          cart: [],
+          wishlist: [],
+          recentlyViewed: [],
+          searchQuery: '',
+          orders: [],
+          currentUser: null,
+          checkoutStep: 0,
+        });
       },
     }),
     {

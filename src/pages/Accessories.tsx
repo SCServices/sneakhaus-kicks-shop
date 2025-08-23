@@ -6,8 +6,18 @@ import { Button } from '../components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function Accessories() {
-  const { getAccessories } = useStore();
+  const { getAccessories, resetStore } = useStore();
   const accessories = getAccessories();
+  
+  // Debug logging
+  console.log('Accessories found:', accessories.length);
+  console.log('Accessories data:', accessories);
+  
+  // Temporary debug button to reset store if needed
+  const handleResetStore = () => {
+    resetStore();
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen py-8">
@@ -47,6 +57,10 @@ export default function Accessories() {
             <p className="text-lg text-muted-foreground">No accessories available at the moment.</p>
             <Button asChild className="mt-4">
               <Link to="/">Browse All Products</Link>
+            </Button>
+            {/* Temporary debug button */}
+            <Button onClick={handleResetStore} variant="outline" className="ml-4">
+              Reset Store (Debug)
             </Button>
           </div>
         )}
