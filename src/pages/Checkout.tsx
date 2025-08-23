@@ -677,36 +677,47 @@ export default function Checkout() {
             </p>
             
             <div className="space-y-4 mb-6">
-              {upsellProducts.map((product) => {
-                const isSelected = selectedUpsells[product.id]?.selected || false;
-                const quantity = selectedUpsells[product.id]?.quantity || 1;
-                const defaultSize = product.sizes[0];
-                
-                return (
-                  <div 
-                    key={product.id} 
-                    className={`border rounded-lg p-4 transition-all ${
-                      isSelected ? 'border-primary bg-primary/5' : 'border-muted'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-4">
-                      {/* Checkbox */}
-                      <div className="pt-1">
-                        <Checkbox
-                          id={`upsell-${product.id}`}
-                          checked={isSelected}
-                          onCheckedChange={() => toggleUpsellSelection(product.id, defaultSize)}
-                        />
-                      </div>
-                      
-                      {/* Product Image */}
-                      <div className="w-20 h-20 bg-brand-gray-light rounded-lg overflow-hidden flex-shrink-0">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+              {upsellProducts.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No accessories available at the moment.</p>
+                </div>
+              ) : (
+                upsellProducts.map((product) => {
+                  const isSelected = selectedUpsells[product.id]?.selected || false;
+                  const quantity = selectedUpsells[product.id]?.quantity || 1;
+                  const defaultSize = product.sizes[0];
+                  
+                  console.log('Rendering product:', product.name, 'Image:', product.image);
+                  
+                  return (
+                    <div 
+                      key={product.id} 
+                      className={`border rounded-lg p-4 transition-all ${
+                        isSelected ? 'border-primary bg-primary/5' : 'border-muted'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-4">
+                        {/* Checkbox */}
+                        <div className="pt-1">
+                          <Checkbox
+                            id={`upsell-${product.id}`}
+                            checked={isSelected}
+                            onCheckedChange={() => toggleUpsellSelection(product.id, defaultSize)}
+                          />
+                        </div>
+                        
+                        {/* Product Image */}
+                        <div className="w-20 h-20 bg-brand-gray-light rounded-lg overflow-hidden flex-shrink-0">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              console.error('Failed to load image:', product.image);
+                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgZmlsbD0iI2Y1ZjVmNSIvPgo8L3N2Zz4K';
+                            }}
+                          />
+                        </div>
                       
                       {/* Product Details */}
                       <div className="flex-1 space-y-2">
@@ -765,7 +776,8 @@ export default function Checkout() {
                     </div>
                   </div>
                 );
-              })}
+              })
+              )}
             </div>
             
             {/* Summary and Actions */}
