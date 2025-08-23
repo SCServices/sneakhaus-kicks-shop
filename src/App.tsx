@@ -19,6 +19,7 @@ import Wishlist from "./pages/Wishlist";
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import OrderTracking from './pages/OrderTracking';
+import Accessories from './pages/Accessories';
 import Support from './pages/Support';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/women" element={<Women />} />
               <Route path="/new-arrivals" element={<NewArrivals />} />
               <Route path="/sale" element={<Sale />} />
+              <Route path="/accessories" element={<Accessories />} />
               <Route path="/search" element={<Search />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/checkout" element={<Checkout />} />

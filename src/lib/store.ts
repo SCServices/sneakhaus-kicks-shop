@@ -106,6 +106,7 @@ interface StoreState {
   getProductsByGender: (gender: 'men' | 'women') => Product[];
   getNewArrivals: () => Product[];
   getSaleProducts: () => Product[];
+  getAccessories: () => Product[];
   // Wishlist methods
   addToWishlist: (productId: string) => void;
   removeFromWishlist: (productId: string) => void;
@@ -448,6 +449,10 @@ export const useStore = create<StoreState>()(
 
       getSaleProducts: () => {
         return get().products.filter(product => product.isOnSale);
+      },
+
+      getAccessories: () => {
+        return get().products.filter(product => product.category === 'Accessories');
       },
 
       // Wishlist methods
