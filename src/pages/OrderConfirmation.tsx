@@ -134,8 +134,8 @@ export default function OrderConfirmation() {
                   {order.items.map((item) => (
                     <div key={`${item.id}-${item.selectedSize}-${item.selectedColor.name}`} className="flex items-center space-x-4">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.selectedColorImage}
+                        alt={`${item.name} - ${item.selectedColor.name}`}
                         className="w-16 h-16 object-cover rounded-lg"
                       />
                       <div className="flex-1">
