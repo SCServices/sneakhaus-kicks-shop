@@ -4,37 +4,30 @@ import { useStore } from '../lib/store';
 import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-
 export default function Accessories() {
-  const { getAccessories, resetStore } = useStore();
+  const {
+    getAccessories,
+    resetStore
+  } = useStore();
   const accessories = getAccessories();
-  
+
   // Debug logging
   console.log('Accessories found:', accessories.length);
   console.log('Accessories data:', accessories);
-  
+
   // Temporary debug button to reset store if needed
   const handleResetStore = () => {
     resetStore();
     window.location.reload();
   };
-
-  return (
-    <div className="min-h-screen py-8">
+  return <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <span>/</span>
-          <span className="text-foreground">Accessories</span>
-        </div>
+        
 
         {/* Back Button */}
         <Button variant="ghost" asChild className="mb-6">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
+          
         </Button>
 
         {/* Header */}
@@ -46,14 +39,9 @@ export default function Accessories() {
         </div>
 
         {/* Products Grid */}
-        {accessories.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {accessories.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
+        {accessories.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {accessories.map(product => <ProductCard key={product.id} product={product} />)}
+          </div> : <div className="text-center py-16">
             <p className="text-lg text-muted-foreground">No accessories available at the moment.</p>
             <Button asChild className="mt-4">
               <Link to="/">Browse All Products</Link>
@@ -62,9 +50,7 @@ export default function Accessories() {
             <Button onClick={handleResetStore} variant="outline" className="ml-4">
               Reset Store (Debug)
             </Button>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 }
