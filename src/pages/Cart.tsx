@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useStore } from '@/lib/store';
-
 const Cart = () => {
-  const { cart, updateQuantity, removeFromCart, cartTotal } = useStore();
-
+  const {
+    cart,
+    updateQuantity,
+    removeFromCart,
+    cartTotal
+  } = useStore();
   if (cart.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <ShoppingBag className="h-24 w-24 mx-auto mb-6 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
@@ -23,12 +25,9 @@ const Cart = () => {
             </Button>
           </Link>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen py-8">
+  return <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -36,17 +35,12 @@ const Cart = () => {
             <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
             
             <div className="space-y-6">
-              {cart.map((item) => (
-                <Card key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="shadow-card">
+              {cart.map(item => <Card key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="shadow-card">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row gap-6">
                       {/* Product Image */}
                       <div className="w-full md:w-32 h-32 bg-brand-gray-light rounded-lg overflow-hidden flex-shrink-0">
-                        <img
-                          src={item.selectedColorImage}
-                          alt={`${item.name} - ${item.selectedColor.name}`}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={item.selectedColorImage} alt={`${item.name} - ${item.selectedColor.name}`} className="w-full h-full object-cover" />
                       </div>
 
                       {/* Product Details */}
@@ -70,17 +64,7 @@ const Cart = () => {
                         <div className="flex items-center justify-between">
                           {/* Quantity Controls */}
                           <div className="flex items-center space-x-3">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => updateQuantity(
-                                item.id, 
-                                item.selectedSize, 
-                                item.selectedColor, 
-                                item.quantity - 1
-                              )}
-                            >
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity - 1)}>
                               <Minus className="h-4 w-4" />
                             </Button>
                             
@@ -88,17 +72,7 @@ const Cart = () => {
                               {item.quantity}
                             </span>
                             
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => updateQuantity(
-                                item.id, 
-                                item.selectedSize, 
-                                item.selectedColor, 
-                                item.quantity + 1
-                              )}
-                            >
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity + 1)}>
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
@@ -108,16 +82,7 @@ const Cart = () => {
                             <p className="text-lg font-bold">
                               ${(item.price * item.quantity).toFixed(2)}
                             </p>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => removeFromCart(
-                                item.id, 
-                                item.selectedSize, 
-                                item.selectedColor
-                              )}
-                            >
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -125,8 +90,7 @@ const Cart = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
 
@@ -159,7 +123,7 @@ const Cart = () => {
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
                     <span>
-                      ${(cartTotal() + (cartTotal() > 200 ? 0 : 15) + (cartTotal() * 0.08)).toFixed(2)}
+                      ${(cartTotal() + (cartTotal() > 200 ? 0 : 15) + cartTotal() * 0.08).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -179,20 +143,12 @@ const Cart = () => {
                 </div>
 
                 {/* Shipping Notice */}
-                {cartTotal() < 200 && (
-                  <div className="mt-4 p-3 bg-brand-gray-light rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      Add ${(200 - cartTotal()).toFixed(2)} more for free shipping!
-                    </p>
-                  </div>
-                )}
+                {cartTotal() < 200}
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Cart;
