@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, X, User, Heart, BarChart3 } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -13,7 +13,6 @@ const Header = () => {
   const location = useLocation();
   const cartCount = useStore(state => state.cartCount());
   const wishlist = useStore(state => state.wishlist);
-  const compareList = useStore(state => state.compareList);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -81,17 +80,6 @@ const Header = () => {
               </Button>
             </Link>
 
-            <Link to="/compare">
-              <Button variant="ghost" size="icon" className="relative">
-                <BarChart3 className="h-5 w-5" />
-                {compareList.length > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-accent text-accent-foreground text-xs">
-                    {compareList.length}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
-
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingBag className="h-5 w-5" />
@@ -148,12 +136,6 @@ const Header = () => {
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <Heart className="h-4 w-4" />
                     <span>Wishlist</span>
-                  </Button>
-                </Link>
-                <Link to="/compare" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <BarChart3 className="h-4 w-4" />
-                    <span>Compare</span>
                   </Button>
                 </Link>
               </div>

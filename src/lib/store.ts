@@ -55,7 +55,6 @@ interface StoreState {
   wishlist: string[];
   recentlyViewed: string[];
   searchQuery: string;
-  compareList: string[];
   addToCart: (product: Product, size: string, color: ProductColor) => void;
   removeFromCart: (id: string, size: string, color: ProductColor) => void;
   updateQuantity: (id: string, size: string, color: ProductColor, quantity: number) => void;
@@ -76,11 +75,6 @@ interface StoreState {
   // Search methods
   setSearchQuery: (query: string) => void;
   searchProducts: (query?: string) => Product[];
-  // Compare methods
-  addToCompare: (productId: string) => void;
-  removeFromCompare: (productId: string) => void;
-  clearCompare: () => void;
-  getCompareProducts: () => Product[];
   // Recommendations
   getRecommendedProducts: (productId: string, limit?: number) => Product[];
 }
@@ -265,7 +259,6 @@ export const useStore = create<StoreState>()(
       wishlist: [],
       recentlyViewed: [],
       searchQuery: '',
-      compareList: [],
       
       addToCart: (product, size, color) => {
         const existingItem = get().cart.find(
@@ -388,32 +381,6 @@ export const useStore = create<StoreState>()(
           product.useCases?.some(useCase => useCase.toLowerCase().includes(lowercaseQuery)) ||
           product.gender.toLowerCase().includes(lowercaseQuery)
         );
-      },
-
-      // Compare methods
-      addToCompare: (productId) => {
-        set(state => {
-          if (state.compareList.includes(productId) || state.compareList.length >= 3) {
-            return state;
-          }
-          return {
-            compareList: [...state.compareList, productId]
-          };
-        });
-      },
-
-      removeFromCompare: (productId) => {
-        set(state => ({
-          compareList: state.compareList.filter(id => id !== productId)
-        }));
-      },
-
-      clearCompare: () => {
-        set({ compareList: [] });
-      },
-
-      getCompareProducts: () => {
-        return get().products.filter(product => get().compareList.includes(product.id));
       },
 
       // Recommendations
