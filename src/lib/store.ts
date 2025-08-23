@@ -43,10 +43,45 @@ export interface Product {
   reviewCount?: number;
 }
 
-export interface CartItem extends Product {
+interface CartItem extends Product {
   quantity: number;
   selectedSize: string;
   selectedColor: ProductColor;
+}
+
+interface ShippingInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+interface Order {
+  id: string;
+  items: CartItem[];
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  shippingInfo: ShippingInfo;
+  paymentMethod: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered';
+  trackingNumber?: string;
+  orderDate: Date;
+  estimatedDelivery: Date;
+}
+
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  orders: Order[];
 }
 
 interface StoreState {
@@ -55,6 +90,9 @@ interface StoreState {
   wishlist: string[];
   recentlyViewed: string[];
   searchQuery: string;
+  orders: Order[];
+  currentUser: User | null;
+  checkoutStep: number;
   addToCart: (product: Product, size: string, color: ProductColor) => void;
   removeFromCart: (id: string, size: string, color: ProductColor) => void;
   updateQuantity: (id: string, size: string, color: ProductColor, quantity: number) => void;
@@ -77,6 +115,17 @@ interface StoreState {
   searchProducts: (query?: string) => Product[];
   // Recommendations
   getRecommendedProducts: (productId: string, limit?: number) => Product[];
+  
+  // Checkout methods
+  setCheckoutStep: (step: number) => void;
+  createOrder: (shippingInfo: ShippingInfo, paymentMethod: string) => string;
+  getOrderById: (orderId: string) => Order | undefined;
+  getOrdersByEmail: (email: string) => Order[];
+  
+  // User methods
+  createUser: (email: string, firstName: string, lastName: string) => User;
+  loginUser: (user: User) => void;
+  logoutUser: () => void;
 }
 
 // Enhanced product catalog with real images
@@ -259,6 +308,9 @@ export const useStore = create<StoreState>()(
       wishlist: [],
       recentlyViewed: [],
       searchQuery: '',
+      orders: [],
+      currentUser: null,
+      checkoutStep: 0,
       
       addToCart: (product, size, color) => {
         const existingItem = get().cart.find(
@@ -396,6 +448,82 @@ export const useStore = create<StoreState>()(
           )
           .sort((a, b) => (b.rating || 0) - (a.rating || 0))
           .slice(0, limit);
+      },
+      
+      // Checkout methods
+      setCheckoutStep: (step) => {
+        set({ checkoutStep: step });
+      },
+      
+      createOrder: (shippingInfo, paymentMethod) => {
+        const cart = get().cart;
+        const subtotal = get().cartTotal();
+        const shipping = subtotal >= 200 ? 0 : 15;
+        const tax = Math.round(subtotal * 0.08 * 100) / 100;
+        const total = subtotal + shipping + tax;
+        
+        const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const orderDate = new Date();
+        const estimatedDelivery = new Date();
+        estimatedDelivery.setDate(orderDate.getDate() + 7);
+        
+        const order: Order = {
+          id: orderId,
+          items: [...cart],
+          subtotal,
+          shipping,
+          tax,
+          total,
+          shippingInfo,
+          paymentMethod,
+          status: 'pending',
+          trackingNumber: `TRK${Math.random().toString(36).substr(2, 10).toUpperCase()}`,
+          orderDate,
+          estimatedDelivery,
+        };
+        
+        set(state => ({
+          orders: [order, ...state.orders],
+          cart: [],
+          checkoutStep: 0
+        }));
+        
+        return orderId;
+      },
+      
+      getOrderById: (orderId) => {
+        return get().orders.find(order => order.id === orderId);
+      },
+      
+      getOrdersByEmail: (email) => {
+        return get().orders.filter(order => 
+          order.shippingInfo.email.toLowerCase() === email.toLowerCase()
+        );
+      },
+      
+      // User methods
+      createUser: (email, firstName, lastName) => {
+        const userId = `USR-${Date.now()}`;
+        const user: User = {
+          id: userId,
+          email,
+          firstName,
+          lastName,
+          orders: get().orders.filter(order => 
+            order.shippingInfo.email.toLowerCase() === email.toLowerCase()
+          )
+        };
+        
+        set({ currentUser: user });
+        return user;
+      },
+      
+      loginUser: (user) => {
+        set({ currentUser: user });
+      },
+      
+      logoutUser: () => {
+        set({ currentUser: null });
       },
     }),
     {

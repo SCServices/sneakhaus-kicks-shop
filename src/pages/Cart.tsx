@@ -165,17 +165,17 @@ const Cart = () => {
                 </div>
 
                 <div className="mt-6 space-y-3">
-                  <Link to="/checkout">
-                    <Button className="w-full bg-brand-black text-white hover:bg-brand-gray-dark">
+                  <Button asChild className="w-full" size="lg">
+                    <Link to="/checkout">
                       Proceed to Checkout
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                   
-                  <Link to="/">
-                    <Button variant="outline" className="w-full">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/">
                       Continue Shopping
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
 
                 {/* Shipping Notice */}
