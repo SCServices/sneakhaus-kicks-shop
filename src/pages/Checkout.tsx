@@ -42,6 +42,7 @@ export default function Checkout() {
   
   const [paymentMethod, setPaymentMethod] = useState('credit-card');
   const [showUpsell, setShowUpsell] = useState(false);
+  const [showFinalConfirmation, setShowFinalConfirmation] = useState(false);
 
   const [paymentInfo, setPaymentInfo] = useState({
     cardNumber: '',
@@ -241,12 +242,18 @@ export default function Checkout() {
       }
     });
 
-    // Create order immediately with updated cart (including upsells)
+    // Close upsell modal and show final confirmation
+    setShowUpsell(false);
+    setShowFinalConfirmation(true);
+  };
+
+  const handleFinalOrderComplete = () => {
+    // Create order with updated cart (including upsells)
     try {
       const orderId = createOrder(shippingInfo, paymentMethod);
       toast({
         title: "Order Placed Successfully!",
-        description: `Your order ${orderId} has been confirmed with selected accessories.`,
+        description: `Your order ${orderId} has been confirmed.`,
       });
       navigate(`/order-confirmation/${orderId}`);
     } catch (error) {
@@ -795,14 +802,66 @@ export default function Checkout() {
                 >
                   No Thanks
                 </Button>
-                <Button 
-                  onClick={handleUpsellComplete} 
-                  className="flex-1"
-                  disabled={Object.values(selectedUpsells).every(selection => !selection.selected)}
-                >
-                  Add & Complete Order ({Object.values(selectedUpsells).filter(s => s.selected).length} items)
-                </Button>
+                 <Button 
+                   onClick={handleUpsellComplete} 
+                   className="flex-1"
+                   disabled={Object.values(selectedUpsells).every(selection => !selection.selected)}
+                 >
+                   Add to Order ({Object.values(selectedUpsells).filter(s => s.selected).length} items)
+                 </Button>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Final Order Confirmation Modal */}
+      {showFinalConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-lg w-full p-6">
+            <h3 className="text-xl font-semibold mb-4">Confirm Your Order</h3>
+            <p className="text-muted-foreground mb-6">
+              Please review your updated order total and confirm your purchase.
+            </p>
+            
+            {/* Updated Order Summary */}
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between text-sm">
+                <span>Subtotal ({cart.length} items)</span>
+                <span>${cartTotal().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="flex items-center">
+                  <Truck className="mr-1 h-3 w-3" />
+                  Shipping
+                </span>
+                <span>{cartTotal() >= 200 ? 'FREE' : '$15.00'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Tax</span>
+                <span>${(cartTotal() * 0.08).toFixed(2)}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>${(cartTotal() + (cartTotal() >= 200 ? 0 : 15) + cartTotal() * 0.08).toFixed(2)}</span>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowFinalConfirmation(false)}
+                className="flex-1"
+              >
+                Back to Cart
+              </Button>
+              <Button 
+                onClick={handleFinalOrderComplete} 
+                className="flex-1"
+              >
+                Confirm & Pay Now
+              </Button>
             </div>
           </Card>
         </div>
