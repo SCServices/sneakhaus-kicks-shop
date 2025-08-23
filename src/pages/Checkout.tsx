@@ -296,8 +296,8 @@ export default function Checkout() {
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor.name}`} className="flex items-center space-x-3">
                     <div className="relative">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.selectedColorImage}
+                        alt={`${item.name} - ${item.selectedColor.name}`}
                         className="w-12 h-12 object-cover rounded"
                       />
                       <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">

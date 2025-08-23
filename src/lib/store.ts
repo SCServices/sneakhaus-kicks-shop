@@ -47,6 +47,7 @@ interface CartItem extends Product {
   quantity: number;
   selectedSize: string;
   selectedColor: ProductColor;
+  selectedColorImage: string;
 }
 
 interface ShippingInfo {
@@ -317,6 +318,8 @@ export const useStore = create<StoreState>()(
           item => item.id === product.id && item.selectedSize === size && item.selectedColor.name === color.name
         );
         
+        const selectedColorImage = color.images && color.images.length > 0 ? color.images[0] : product.image;
+        
         if (existingItem) {
           set(state => ({
             cart: state.cart.map(item =>
@@ -327,7 +330,7 @@ export const useStore = create<StoreState>()(
           }));
         } else {
           set(state => ({
-            cart: [...state.cart, { ...product, quantity: 1, selectedSize: size, selectedColor: color }]
+            cart: [...state.cart, { ...product, quantity: 1, selectedSize: size, selectedColor: color, selectedColorImage }]
           }));
         }
       },
