@@ -141,3 +141,71 @@
   - Other relevant accessories
 - Update upsell logic to reference actual product IDs from catalog
 - Ensure upsells can be purchased independently outside of checkout flow
+
+## Phase 9: Post-Fix Checkout Issues 🚨
+
+### Bug 5: Missing Payment Method Input Fields
+**Current Behavior:** When user selects credit card payment method, no input fields appear for card details
+**Expected Behavior:** Should display comprehensive payment form with:
+- Credit card number input field
+- CVV/Security code field  
+- Expiration date (month/year selectors)
+- Cardholder name field
+- Billing ZIP code input
+- Option to use shipping address as billing address
+- Address verification between shipping and billing
+
+**Steps to Reproduce:**
+1. Add items to cart and proceed to checkout
+2. Complete shipping information step
+3. Navigate to Payment Method step  
+4. Select "Credit Card" radio button
+5. Observe that no input fields appear below the selection
+
+**Fix Plan:**
+- Add conditional rendering in checkout payment section
+- Create credit card form component with proper validation
+- Include all standard payment fields (card number, CVV, expiry, name, billing address)
+- Add toggle for "Same as shipping address" 
+- Implement basic form validation (card number format, expiry date validation)
+- Ensure form integrates with existing checkout flow
+- Add visual feedback for form validation states
+
+### Bug 6: Upsell Modal Missing Product Images
+**Current Behavior:** Upsell modal displays without any product images despite recent implementation
+**Expected Behavior:** Should show AI-generated product images for each accessory item
+
+**Steps to Reproduce:**
+1. Add items to cart and proceed through checkout
+2. Complete shipping and payment steps
+3. Click "Complete Order" to trigger upsell modal
+4. Observe that accessory items show no images
+
+**Fix Plan:**
+- Debug image loading in upsell modal
+- Verify AI-generated images are properly imported in store.ts
+- Check that getUpsellProducts() function returns products with correct image paths
+- Ensure image paths are correctly passed to modal component
+- Verify image assets exist in src/assets directory
+- Test image rendering in modal component
+- Add fallback images if main images fail to load
+
+### Bug 7: Order Confirmation Shows Wrong Product Image
+**Current Behavior:** Order confirmation page displays main product image instead of selected color variant
+**Expected Behavior:** Should display the specific color variant image that user selected and added to cart
+
+**Steps to Reproduce:**  
+1. Navigate to product detail page (e.g., Velocity Runner)
+2. Select a specific color variant (e.g., Black/White)  
+3. Add to cart with selected color
+4. Complete checkout process
+5. View order confirmation page
+6. Observe product image shows main product image, not selected color variant
+
+**Fix Plan:**
+- Update order creation to store selectedColorImage from cart items
+- Modify Order interface to include selectedColorImage field for each item
+- Update OrderConfirmation component to use item.selectedColorImage instead of product.image
+- Ensure order storage persists the correct image URLs
+- Test that cart → checkout → confirmation maintains image consistency
+- Verify order history also shows correct color variant images
