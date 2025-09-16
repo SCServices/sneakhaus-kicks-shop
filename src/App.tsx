@@ -16,9 +16,6 @@ import NewArrivals from "./pages/NewArrivals";
 import Sale from "./pages/Sale";
 import Search from "./pages/Search";
 import Wishlist from "./pages/Wishlist";
-import Checkout from './pages/Checkout';
-import OrderConfirmation from './pages/OrderConfirmation';
-import OrderTracking from './pages/OrderTracking';
 import Accessories from './pages/Accessories';
 import Support from './pages/Support';
 import Terms from './pages/Terms';
@@ -47,9 +44,6 @@ const App = () => (
               <Route path="/accessories" element={<Accessories />} />
               <Route path="/search" element={<Search />} />
               <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
-              <Route path="/order-tracking" element={<OrderTracking />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/support" element={<Support />} />

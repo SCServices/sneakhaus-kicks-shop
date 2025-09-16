@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useStore } from '@/lib/store';
+import { useToast } from '@/hooks/use-toast';
 const Cart = () => {
   const {
     cart,
@@ -11,6 +12,16 @@ const Cart = () => {
     removeFromCart,
     cartTotal
   } = useStore();
+  
+  const { toast } = useToast();
+
+  const handleCheckoutClick = () => {
+    toast({
+      title: "Checkout Pending",
+      description: "This process is pending Shopify integration - please prompt the agent to integrate your store using Shopify API and Store ID.",
+      duration: 5000,
+    });
+  };
   if (cart.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -129,10 +140,8 @@ const Cart = () => {
                 </div>
 
                 <div className="mt-6 space-y-3">
-                  <Button asChild className="w-full" size="lg">
-                    <Link to="/checkout">
-                      Proceed to Checkout
-                    </Link>
+                  <Button onClick={handleCheckoutClick} className="w-full" size="lg">
+                    Proceed to Checkout
                   </Button>
                   
                   <Button asChild variant="outline" className="w-full">
