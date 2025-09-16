@@ -82,3 +82,19 @@ Once mobile bugs are resolved, consider:
 **Next Step:**
 - When store info is ready, enable Lovable Cloud Shopify integration and wire checkout to Shopify.
 - Audit other portal-based components that may render <Link> to ensure they are inside the Router context.
+
+## Bug 5: Toast button not stacking below text ✅
+- Date: 2025-09-16
+- Summary: Toast action button was appearing inline with text instead of stacked below as requested.
+
+**Root Cause:** Toast component uses `justify-between` layout that positions actions on the right side of content by default.
+
+**Fix Status:** COMPLETED — Moved button from separate `action` prop to within `description` content as JSX with proper spacing.
+
+**How to Test:**
+1. Navigate to /cart
+2. Click "Proceed to checkout" to open the toast
+3. Verify "More Info" button appears below the text with proper spacing
+
+**Next Step:**
+- Ready for Shopify integration when store details are available.

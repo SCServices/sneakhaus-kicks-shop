@@ -18,15 +18,15 @@ const Cart = () => {
   const handleCheckoutClick = () => {
     toast({
       title: "Checkout Pending",
-      description: "This process is pending Shopify integration - please prompt the agent to integrate your store using Shopify API and Store ID.",
-      duration: 5000,
-      action: (
-        <div className="mt-2">
+      description: (
+        <div className="space-y-3">
+          <p>This process is pending Shopify integration - please prompt the agent to integrate your store using Shopify API and Store ID.</p>
           <Button asChild variant="outline" size="sm" className="w-full">
             <Link to="/docs">More Info</Link>
           </Button>
         </div>
       ),
+      duration: 5000,
     });
   };
   if (cart.length === 0) {
