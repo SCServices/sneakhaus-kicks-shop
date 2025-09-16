@@ -65,3 +65,20 @@ Once mobile bugs are resolved, consider:
 - Touch-friendly button sizing and spacing improvements
 - Mobile-specific user experience enhancements
 - Accessibility improvements for form navigation on mobile
+
+## Bug 4: Toast action Link crashes outside Router context ✅
+- Date: 2025-09-16
+- Summary: Rendering a Link inside a toast action crashed with "Cannot destructure property 'basename' of 'React.useContext(...)' as it is null."
+
+**Root Cause:** Toaster and Sonner were mounted outside BrowserRouter, so Links rendered by the toast provider lacked router context.
+
+**Fix Status:** COMPLETED — Moved <Toaster /> and <Sonner /> inside <BrowserRouter /> in src/App.tsx.
+
+**How to Test:**
+1. Navigate to /cart
+2. Click "Proceed to checkout" to open the toast
+3. Click "More Info" in the toast action — should navigate to /docs without errors
+
+**Next Step:**
+- When store info is ready, enable Lovable Cloud Shopify integration and wire checkout to Shopify.
+- Audit other portal-based components that may render <Link> to ensure they are inside the Router context.
