@@ -21,9 +21,11 @@ const Cart = () => {
       description: "This process is pending Shopify integration - please prompt the agent to integrate your store using Shopify API and Store ID.",
       duration: 5000,
       action: (
-        <Button asChild variant="outline" size="sm">
-          <Link to="/docs">More Info</Link>
-        </Button>
+        <div className="mt-2">
+          <Button asChild variant="outline" size="sm" className="w-full">
+            <Link to="/docs">More Info</Link>
+          </Button>
+        </div>
       ),
     });
   };
