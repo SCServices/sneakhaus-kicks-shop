@@ -20,6 +20,11 @@ const Cart = () => {
       title: "Checkout Pending",
       description: "This process is pending Shopify integration - please prompt the agent to integrate your store using Shopify API and Store ID.",
       duration: 5000,
+      action: (
+        <Button asChild variant="outline" size="sm">
+          <Link to="/docs">More Info</Link>
+        </Button>
+      ),
     });
   };
   if (cart.length === 0) {
