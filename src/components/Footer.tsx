@@ -15,14 +15,20 @@ const Footer = () => {
               Premium sneakers for the modern lifestyle. Step into excellence with our curated collection.
             </p>
             <div className="flex space-x-4">
-              <Button variant="ghost" size="icon" className="text-white hover:text-brand-gold">
-                <Instagram className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="text-white hover:text-white/80" asChild>
+                <a href="https://instagram.com/sneakhaus" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-5 w-5" />
+                </a>
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:text-brand-gold">
-                <Twitter className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="text-white hover:text-white/80" asChild>
+                <a href="https://twitter.com/sneakhaus" target="_blank" rel="noopener noreferrer">
+                  <Twitter className="h-5 w-5" />
+                </a>
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:text-brand-gold">
-                <Facebook className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="text-white hover:text-white/80" asChild>
+                <a href="https://facebook.com/sneakhaus" target="_blank" rel="noopener noreferrer">
+                  <Facebook className="h-5 w-5" />
+                </a>
               </Button>
             </div>
           </div>
