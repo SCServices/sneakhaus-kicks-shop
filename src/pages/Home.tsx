@@ -206,9 +206,11 @@ const Home = () => {
                   <span>Sustainable and ethical production</span>
                 </div>
               </div>
-              <Button size="lg" className="bg-brand-black text-white hover:bg-brand-gray-dark">
-                Explore Collections
-              </Button>
+              <Link to="/products">
+                <Button size="lg" className="bg-brand-black text-white hover:bg-brand-gray-dark">
+                  Explore Collections
+                </Button>
+              </Link>
             </div>
             
             <div className="relative">
