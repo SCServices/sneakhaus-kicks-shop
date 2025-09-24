@@ -62,10 +62,10 @@ const Footer = () => {
               <Link to="/order-tracking" className="block text-gray-300 hover:text-white transition-smooth">
                 Track Your Order
               </Link>
-              <Link to="/support" className="block text-gray-300 hover:text-white transition-smooth">
+              <Link to="/returns-exchanges" className="block text-gray-300 hover:text-white transition-smooth">
                 Returns & Exchanges
               </Link>
-              <Link to="/support" className="block text-gray-300 hover:text-white transition-smooth">
+              <Link to="/shipping-policy" className="block text-gray-300 hover:text-white transition-smooth">
                 Shipping Info
               </Link>
             </div>
