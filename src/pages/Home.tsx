@@ -14,7 +14,6 @@ import heroImage from '@/assets/hero-sneaker.jpg';
 // Video will be added when available
 import collectionImage from '@/assets/collection-banner.jpg';
 import SocialMediaFeed from '@/components/SocialMediaFeed';
-import KPISlider from '@/components/KPISlider';
 
 const Home = () => {
   const { products, addToCart } = useStore();
@@ -291,8 +290,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* KPI Slider */}
-      <KPISlider />
     </div>
   );
 };
