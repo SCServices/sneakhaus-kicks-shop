@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, Menu, X, User, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
 import { useStore } from '@/lib/store';
 import SearchBar from '@/components/SearchBar';
 
@@ -52,19 +52,14 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
-            <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="hidden md:flex">
-                  <Search className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Search Products</DialogTitle>
-                </DialogHeader>
-                <SearchBar onClose={() => setIsSearchOpen(false)} autoFocus />
-              </DialogContent>
-            </Dialog>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="hidden md:flex"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
 
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <User className="h-5 w-5" />
@@ -148,6 +143,15 @@ const Header = () => {
                 </Link>
               </div>
             </nav>
+          </div>
+        )}
+
+        {/* Inline Search Bar */}
+        {isSearchOpen && (
+          <div className="border-t bg-background/95 backdrop-blur-sm">
+            <div className="p-4">
+              <SearchBar onClose={() => setIsSearchOpen(false)} autoFocus />
+            </div>
           </div>
         )}
       </div>
