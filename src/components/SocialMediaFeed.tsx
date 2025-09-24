@@ -105,7 +105,7 @@ const SocialMediaFeed = () => {
         <div className="text-center mt-8">
           <p className="text-muted-foreground mb-4">Follow us for more inspiration</p>
           <div className="flex justify-center space-x-4">
-            <a href="#" className="text-accent hover:text-accent-dark transition-colors">
+            <a href="https://instagram.com/sneakhaus" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-dark transition-colors">
               <Instagram className="h-6 w-6" />
             </a>
           </div>
