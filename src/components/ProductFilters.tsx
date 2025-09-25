@@ -97,7 +97,7 @@ export default function ProductFilters({
   };
 
   const getCurrentSizes = (): string[] => {
-    if (selectedSizeCategory) {
+    if (selectedSizeCategory && selectedSizeCategory !== 'ALL_PRODUCTS') {
       return getAvailableSizesForCategory(selectedSizeCategory);
     }
     return availableSizes;
@@ -110,7 +110,7 @@ export default function ProductFilters({
   };
 
   const clearAllFilters = () => {
-    setSelectedSizeCategory('');
+    setSelectedSizeCategory('ALL_PRODUCTS');
     onFiltersChange({
       categories: [],
       priceRange: priceRange,
@@ -278,7 +278,7 @@ export default function ProductFilters({
                   <SelectValue placeholder="Select product type for sizes..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Products</SelectItem>
+                  <SelectItem value="ALL_PRODUCTS">All Products</SelectItem>
                   {Object.keys(CATEGORY_SIZES).map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -303,7 +303,7 @@ export default function ProductFilters({
               ))}
             </div>
             
-            {selectedSizeCategory && (
+            {selectedSizeCategory && selectedSizeCategory !== 'ALL_PRODUCTS' && (
               <p className="text-xs text-muted-foreground">
                 Showing sizes for {selectedSizeCategory} products
               </p>
