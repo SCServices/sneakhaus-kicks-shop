@@ -1,9 +1,49 @@
 import { useStore } from '@/lib/store';
 import ProductCard from '@/components/ProductCard';
+import ProductFilters, { FilterState } from '@/components/ProductFilters';
+import { useState, useMemo } from 'react';
 
 const Men = () => {
-  const getProductsByGender = useStore(state => state.getProductsByGender);
-  const menProducts = getProductsByGender('men');
+  const { 
+    getProductsByGender,
+    filters,
+    setFilters,
+    getFilteredProducts,
+    getAvailableCategories,
+    getAvailableSizes, 
+    getAvailableColors,
+    getPriceRange
+  } = useStore();
+  
+  const menProducts = useMemo(() => 
+    getProductsByGender('men'), 
+    [getProductsByGender]
+  );
+
+  const filteredProducts = useMemo(() => 
+    getFilteredProducts(menProducts), 
+    [getFilteredProducts, menProducts, filters]
+  );
+
+  const availableCategories = useMemo(() => 
+    getAvailableCategories(menProducts), 
+    [getAvailableCategories, menProducts]
+  );
+  
+  const availableSizes = useMemo(() => 
+    getAvailableSizes(menProducts), 
+    [getAvailableSizes, menProducts]
+  );
+  
+  const availableColors = useMemo(() => 
+    getAvailableColors(menProducts), 
+    [getAvailableColors, menProducts]
+  );
+  
+  const priceRange = useMemo(() => 
+    getPriceRange(menProducts), 
+    [getPriceRange, menProducts]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
@@ -15,17 +55,41 @@ const Men = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        {menProducts.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No men's products available at the moment.</p>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filters Sidebar */}
+          <div className="lg:w-80 flex-shrink-0">
+            <ProductFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableCategories={availableCategories}
+              availableSizes={availableSizes}
+              availableColors={availableColors}
+              priceRange={priceRange}
+            />
           </div>
-        )}
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredProducts.length} of {menProducts.length} men's products
+              </p>
+            </div>
+            
+            {filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg mb-4">No men's products match your current filters.</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters to see more results.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

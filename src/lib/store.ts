@@ -92,6 +92,14 @@ interface User {
   orders: Order[];
 }
 
+interface FilterState {
+  categories: string[];
+  priceRange: [number, number];
+  sizes: string[];
+  colors: string[];
+  gender: string[];
+}
+
 interface StoreState {
   products: Product[];
   cart: CartItem[];
@@ -101,6 +109,8 @@ interface StoreState {
   orders: Order[];
   currentUser: User | null;
   checkoutStep: number;
+  // Filter state
+  filters: FilterState;
   addToCart: (product: Product, size: string, color: ProductColor) => void;
   removeFromCart: (id: string, size: string, color: ProductColor) => void;
   updateQuantity: (id: string, size: string, color: ProductColor, quantity: number) => void;
@@ -122,6 +132,14 @@ interface StoreState {
   // Search methods
   setSearchQuery: (query: string) => void;
   searchProducts: (query?: string) => Product[];
+  // Filtering methods
+  setFilters: (filters: FilterState) => void;
+  getFilteredProducts: (baseProducts?: Product[]) => Product[];
+  getAvailableCategories: (baseProducts?: Product[]) => string[];
+  getAvailableSizes: (baseProducts?: Product[]) => string[];
+  getAvailableColors: (baseProducts?: Product[]) => string[];
+  getPriceRange: (baseProducts?: Product[]) => [number, number];
+  clearFilters: () => void;
   // Recommendations
   getRecommendedProducts: (productId: string, limit?: number) => Product[];
   getUpsellProducts: () => Product[];
@@ -472,6 +490,13 @@ export const useStore = create<StoreState>()(
       orders: [],
       currentUser: null,
       checkoutStep: 0,
+      filters: {
+        categories: [],
+        priceRange: [0, 500],
+        sizes: [],
+        colors: [],
+        gender: []
+      },
       
       addToCart: (product, size, color) => {
         const existingItem = get().cart.find(
@@ -702,8 +727,106 @@ export const useStore = create<StoreState>()(
         set({ currentUser: null });
       },
       
+      // Filter methods
+      setFilters: (filters) => {
+        set({ filters });
+      },
+      
+      getFilteredProducts: (baseProducts) => {
+        const { filters } = get();
+        const productsToFilter = baseProducts || get().products;
+        
+        return productsToFilter.filter(product => {
+          // Category filter
+          if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
+            return false;
+          }
+          
+          // Gender filter  
+          if (filters.gender.length > 0 && !filters.gender.includes(product.gender)) {
+            return false;
+          }
+          
+          // Price filter
+          if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+            return false;
+          }
+          
+          // Size filter
+          if (filters.sizes.length > 0) {
+            const hasMatchingSize = product.sizes.some(size => filters.sizes.includes(size));
+            if (!hasMatchingSize) return false;
+          }
+          
+          // Color filter
+          if (filters.colors.length > 0) {
+            const hasMatchingColor = product.colors.some(color => 
+              filters.colors.some(filterColor => 
+                color.name.toLowerCase().includes(filterColor.toLowerCase())
+              )
+            );
+            if (!hasMatchingColor) return false;
+          }
+          
+          return true;
+        });
+      },
+      
+      getAvailableCategories: (baseProducts) => {
+        const productsToAnalyze = baseProducts || get().products;
+        const categories = [...new Set(productsToAnalyze.map(p => p.category))];
+        return categories.sort();
+      },
+      
+      getAvailableSizes: (baseProducts) => {
+        const productsToAnalyze = baseProducts || get().products;
+        const allSizes = productsToAnalyze.flatMap(p => p.sizes);
+        const uniqueSizes = [...new Set(allSizes)];
+        // Sort sizes numerically where possible
+        return uniqueSizes.sort((a, b) => {
+          const aNum = parseFloat(a);
+          const bNum = parseFloat(b);
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            return aNum - bNum;
+          }
+          return a.localeCompare(b);
+        });
+      },
+      
+      getAvailableColors: (baseProducts) => {
+        const productsToAnalyze = baseProducts || get().products;
+        const allColors = productsToAnalyze.flatMap(p => p.colors.map(c => c.name));
+        const uniqueColors = [...new Set(allColors)];
+        return uniqueColors.sort();
+      },
+      
+      getPriceRange: (baseProducts) => {
+        const productsToAnalyze = baseProducts || get().products;
+        if (productsToAnalyze.length === 0) return [0, 500];
+        
+        const prices = productsToAnalyze.map(p => p.price);
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        
+        return [Math.floor(minPrice / 10) * 10, Math.ceil(maxPrice / 10) * 10] as [number, number];
+      },
+      
+      clearFilters: () => {
+        const defaultPriceRange = get().getPriceRange();
+        set({
+          filters: {
+            categories: [],
+            priceRange: defaultPriceRange,
+            sizes: [],
+            colors: [],
+            gender: []
+          }
+        });
+      },
+
       // Debug function to reset store and reload fresh data
       resetStore: () => {
+        const defaultPriceRange = get().getPriceRange();
         set({
           products: mockProducts,
           cart: [],
@@ -713,6 +836,13 @@ export const useStore = create<StoreState>()(
           orders: [],
           currentUser: null,
           checkoutStep: 0,
+          filters: {
+            categories: [],
+            priceRange: defaultPriceRange,
+            sizes: [],
+            colors: [],
+            gender: []
+          }
         });
       },
     }),

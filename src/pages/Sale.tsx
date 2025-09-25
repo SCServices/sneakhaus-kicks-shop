@@ -1,10 +1,50 @@
 import { useStore } from '@/lib/store';
 import ProductCard from '@/components/ProductCard';
+import ProductFilters, { FilterState } from '@/components/ProductFilters';
 import { Badge } from '@/components/ui/badge';
+import { useState, useMemo } from 'react';
 
 const Sale = () => {
-  const getSaleProducts = useStore(state => state.getSaleProducts);
-  const saleProducts = getSaleProducts();
+  const { 
+    getSaleProducts,
+    filters,
+    setFilters,
+    getFilteredProducts,
+    getAvailableCategories,
+    getAvailableSizes, 
+    getAvailableColors,
+    getPriceRange
+  } = useStore();
+  
+  const saleProducts = useMemo(() => 
+    getSaleProducts(), 
+    [getSaleProducts]
+  );
+
+  const filteredProducts = useMemo(() => 
+    getFilteredProducts(saleProducts), 
+    [getFilteredProducts, saleProducts, filters]
+  );
+
+  const availableCategories = useMemo(() => 
+    getAvailableCategories(saleProducts), 
+    [getAvailableCategories, saleProducts]
+  );
+  
+  const availableSizes = useMemo(() => 
+    getAvailableSizes(saleProducts), 
+    [getAvailableSizes, saleProducts]
+  );
+  
+  const availableColors = useMemo(() => 
+    getAvailableColors(saleProducts), 
+    [getAvailableColors, saleProducts]
+  );
+  
+  const priceRange = useMemo(() => 
+    getPriceRange(saleProducts), 
+    [getPriceRange, saleProducts]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
@@ -21,17 +61,41 @@ const Sale = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {saleProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        {saleProducts.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No sale items available right now. Check back later for great deals!</p>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filters Sidebar */}
+          <div className="lg:w-80 flex-shrink-0">
+            <ProductFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableCategories={availableCategories}
+              availableSizes={availableSizes}
+              availableColors={availableColors}
+              priceRange={priceRange}
+            />
           </div>
-        )}
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredProducts.length} of {saleProducts.length} sale items
+              </p>
+            </div>
+            
+            {filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg mb-4">No sale items match your current filters.</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters to see more results.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
