@@ -69,9 +69,9 @@ export default function ProductFilters({
   const [openSections, setOpenSections] = useState({
     category: true,
     price: true,
-    size: true,
-    color: true,
-    gender: true
+    size: false,
+    color: false,
+    gender: false
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -150,7 +150,7 @@ export default function ProductFilters({
     (filters.priceRange[0] !== priceRange[0] || filters.priceRange[1] !== priceRange[1] ? 1 : 0);
 
   return (
-    <div className={`bg-card rounded-lg border shadow-sm ${className}`}>
+    <div className={`bg-card rounded-lg border shadow-sm sticky top-4 ${className}`}>
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden">
         <Button
