@@ -66,7 +66,6 @@ export default function ProductFilters({
   className = ""
 }: ProductFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSizeCategory, setSelectedSizeCategory] = useState<string>('');
   const [openSections, setOpenSections] = useState({
     category: true,
     price: true,
@@ -91,16 +90,32 @@ export default function ProductFilters({
     updateFilters(key, newArray);
   };
 
-  // Get available sizes based on selected category
-  const getAvailableSizesForCategory = (category: string): string[] => {
-    return CATEGORY_SIZES[category as keyof typeof CATEGORY_SIZES] || [];
-  };
-
-  const getCurrentSizes = (): string[] => {
-    if (selectedSizeCategory && selectedSizeCategory !== 'ALL_PRODUCTS') {
-      return getAvailableSizesForCategory(selectedSizeCategory);
+  // Get available sizes based on selected categories
+  const getCategorySizes = (): string[] => {
+    if (filters.categories.length === 0) {
+      return availableSizes;
     }
-    return availableSizes;
+    
+    const categorySizes = new Set<string>();
+    filters.categories.forEach(category => {
+      const sizes = CATEGORY_SIZES[category as keyof typeof CATEGORY_SIZES] || [];
+      sizes.forEach(size => categorySizes.add(size));
+    });
+    
+    return Array.from(categorySizes).sort((a, b) => {
+      // Custom sort for sizes
+      if (a === 'One Size') return 1;
+      if (b === 'One Size') return -1;
+      if (a.includes('-')) return 1;
+      if (b.includes('-')) return -1;
+      if (a.includes('ml')) return 1;
+      if (b.includes('ml')) return -1;
+      if (['S', 'M', 'L', 'XL'].includes(a) && ['S', 'M', 'L', 'XL'].includes(b)) {
+        const order = ['S', 'M', 'L', 'XL'];
+        return order.indexOf(a) - order.indexOf(b);
+      }
+      return parseInt(a) - parseInt(b);
+    });
   };
 
   const getColorHex = (colorName: string): string => {
@@ -110,7 +125,6 @@ export default function ProductFilters({
   };
 
   const clearAllFilters = () => {
-    setSelectedSizeCategory('ALL_PRODUCTS');
     onFiltersChange({
       categories: [],
       priceRange: priceRange,
@@ -270,27 +284,16 @@ export default function ProductFilters({
             {openSections.size ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-3 space-y-4">
-            {/* Category Selection for Sizes */}
-            <div>
-              <Label className="text-sm text-muted-foreground mb-2 block">Product Type</Label>
-              <Select value={selectedSizeCategory} onValueChange={setSelectedSizeCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select product type for sizes..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL_PRODUCTS">All Products</SelectItem>
-                  {Object.keys(CATEGORY_SIZES).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Category hint */}
+            {filters.categories.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Showing sizes for: {filters.categories.join(', ')}
+              </p>
+            )}
 
             {/* Size Buttons */}
             <div className="grid grid-cols-4 gap-2">
-              {getCurrentSizes().map((size) => (
+              {getCategorySizes().map((size) => (
                 <Button
                   key={size}
                   variant={filters.sizes.includes(size) ? "default" : "outline"}
@@ -303,9 +306,9 @@ export default function ProductFilters({
               ))}
             </div>
             
-            {selectedSizeCategory && selectedSizeCategory !== 'ALL_PRODUCTS' && (
+            {filters.categories.length === 0 && (
               <p className="text-xs text-muted-foreground">
-                Showing sizes for {selectedSizeCategory} products
+                Select a category above to see relevant sizes
               </p>
             )}
           </CollapsibleContent>
