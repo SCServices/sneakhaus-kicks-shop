@@ -191,7 +191,6 @@ const ProductDetail = () => {
                   <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground">(127 reviews)</span>
             </div>
           </div>
 
@@ -321,121 +320,6 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Customer Reviews Section */}
-      <div className="mt-16">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Customer Reviews</span>
-              <div className="flex items-center space-x-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground">5.0 (127 reviews)</span>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Review Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-foreground">5.0</div>
-                <div className="flex justify-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground">Based on 127 reviews</p>
-              </div>
-              <div className="space-y-2">
-                {[5, 4, 3, 2, 1].map((stars) => (
-                  <div key={stars} className="flex items-center space-x-2">
-                    <span className="text-sm w-3">{stars}</span>
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                    <div className="flex-1 bg-muted rounded-full h-2">
-                      <div 
-                        className="bg-yellow-400 h-2 rounded-full"
-                        style={{ width: stars === 5 ? '85%' : stars === 4 ? '10%' : '5%' }}
-                      />
-                    </div>
-                    <span className="text-sm text-muted-foreground w-8">
-                      {stars === 5 ? '108' : stars === 4 ? '12' : '7'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center">
-                <Button variant="outline" className="w-full">
-                  Write a Review
-                </Button>
-              </div>
-            </div>
-
-            {/* Individual Reviews */}
-            <div className="space-y-6">
-              {[
-                {
-                  name: "Sarah M.",
-                  rating: 5,
-                  date: "2 weeks ago",
-                  title: "Perfect fit and great quality!",
-                  content: "I absolutely love these shoes! The quality is outstanding and they're incredibly comfortable. Perfect for both casual and semi-formal occasions.",
-                  verified: true
-                },
-                {
-                  name: "Mike R.",
-                  rating: 5,
-                  date: "1 month ago", 
-                  title: "Exceeded expectations",
-                  content: "These shoes are even better in person. The craftsmanship is excellent and they've held up beautifully after several months of regular wear.",
-                  verified: true
-                },
-                {
-                  name: "Emma K.",
-                  rating: 4,
-                  date: "1 month ago",
-                  title: "Great style, runs slightly large",
-                  content: "Love the design and color options. Only minor issue is they run a bit large, so I'd recommend ordering a half size down.",
-                  verified: true
-                }
-              ].map((review, index) => (
-                <div key={index} className="border-b pb-6 last:border-b-0">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h4 className="font-medium">{review.name}</h4>
-                          {review.verified && (
-                            <Badge variant="secondary" className="text-xs">Verified Purchase</Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`h-3 w-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} 
-                              />
-                            ))}
-                          </div>
-                          <span className="text-xs text-muted-foreground">{review.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="font-medium mb-2">{review.title}</h5>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{review.content}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Frequently Purchased Together */}
       <div className="mt-16">
